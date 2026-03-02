@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Divine Office — Developer Preview</title>
+  <style>
+    :root {
+      --bg: #f8f6f3;
+      --surface: #ffffff;
+      --text: #2c2420;
+      --text-muted: #7a7067;
+      --accent: #8b2f1a;
+      --accent-light: #c4694f;
+      --border: #e2ddd7;
+      --gold: #b8941e;
+      --green: #2e6b3e;
+      --purple: #5c3d7a;
+      --red: #a32828;
+      --white: #f0ede8;
+      --radius: 8px;
+      --shadow: 0 2px 12px rgba(44,36,32,0.08);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Georgia', 'Times New Roman', serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    header {
+      background: var(--accent);
+      color: var(--white);
+      padding: 1.5rem 2rem;
+      text-align: center;
+    }
+
+    header h1 {
+      font-size: 1.6rem;
+      font-weight: 400;
+      letter-spacing: 0.05em;
+    }
+
+    header p {
+      font-size: 0.85rem;
+      opacity: 0.8;
+      margin-top: 0.3rem;
+      font-family: system-ui, sans-serif;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 1.5rem;
+      display: grid;
+      grid-template-columns: 360px 1fr;
+      gap: 1.5rem;
+      min-height: calc(100vh - 100px);
+    }
+
+    @media (max-width: 860px) {
+      .container { grid-template-columns: 1fr; }
+    }
+
+    /* --- Calendar Panel --- */
+    .calendar-panel {
+      background: var(--surface);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 1.25rem;
+      position: sticky;
+      top: 1.5rem;
+      align-self: start;
+    }
+
+    .month-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1rem;
+    }
+
+    .month-nav button {
+      background: none;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 0.3rem 0.8rem;
+      cursor: pointer;
+      font-size: 0.9rem;
+      color: var(--text);
+      transition: background 0.15s;
+    }
+
+    .month-nav button:hover { background: var(--bg); }
+
+    .month-nav .month-label {
+      font-size: 1.1rem;
+      font-weight: 600;
+    }
+
+    .weekday-headers {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      text-align: center;
+      font-family: system-ui, sans-serif;
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 0.4rem;
+      letter-spacing: 0.05em;
+    }
+
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 3px;
+    }
+
+    .day-cell {
+      aspect-ratio: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      position: relative;
+      transition: all 0.15s;
+      border: 2px solid transparent;
+    }
+
+    .day-cell:hover { background: var(--bg); }
+    .day-cell.empty { cursor: default; }
+    .day-cell.empty:hover { background: transparent; }
+    .day-cell.today { border-color: var(--accent); font-weight: 700; }
+    .day-cell.selected { background: var(--accent); color: white; border-color: var(--accent); }
+    .day-cell.selected:hover { background: var(--accent-light); }
+    .day-cell.has-data::after {
+      content: '';
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: var(--green);
+      position: absolute;
+      bottom: 4px;
+    }
+    .day-cell.has-saint::before {
+      content: '✦';
+      font-size: 0.5rem;
+      color: var(--gold);
+      position: absolute;
+      top: 3px;
+      right: 5px;
+    }
+    .day-cell.selected::after { background: white; }
+    .day-cell.selected::before { color: white; }
+
+    .calendar-legend {
+      display: flex;
+      gap: 1rem;
+      margin-top: 0.8rem;
+      font-family: system-ui, sans-serif;
+      font-size: 0.7rem;
+      color: var(--text-muted);
+    }
+
+    .calendar-legend span { display: flex; align-items: center; gap: 0.3rem; }
+    .legend-dot {
+      width: 6px; height: 6px; border-radius: 50%; display: inline-block;
+    }
+
+    .stats-bar {
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border);
+      font-family: system-ui, sans-serif;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.4rem;
+    }
+
+    .stats-bar .stat-val { font-weight: 700; color: var(--text); }
+
+    /* --- Detail Panel --- */
+    .detail-panel {
+      background: var(--surface);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 2rem;
+      min-height: 400px;
+    }
+
+    .detail-panel.empty {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-muted);
+      font-style: italic;
+    }
+
+    .date-header {
+      border-bottom: 2px solid var(--border);
+      padding-bottom: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .date-header h2 {
+      font-size: 1.5rem;
+      font-weight: 400;
+      color: var(--accent);
+    }
+
+    .date-header .day-of-week {
+      font-family: system-ui, sans-serif;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--text-muted);
+      margin-bottom: 0.3rem;
+    }
+
+    .date-header .description {
+      margin-top: 0.5rem;
+      font-size: 1rem;
+      color: var(--text);
+    }
+
+    .liturgical-color-badge {
+      display: inline-block;
+      padding: 0.15rem 0.5rem;
+      border-radius: 3px;
+      font-family: system-ui, sans-serif;
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-top: 0.4rem;
+    }
+
+    .color-green { background: #e8f5e9; color: var(--green); }
+    .color-red { background: #fce4ec; color: var(--red); }
+    .color-purple, .color-violet { background: #f3e5f5; color: var(--purple); }
+    .color-white { background: #f5f5f0; color: #555; }
+    .color-rose { background: #fce4ec; color: #c2185b; }
+
+    /* Saint Section */
+    .saint-section {
+      background: linear-gradient(135deg, #faf7f2, #f5f0e8);
+      border-radius: var(--radius);
+      padding: 1.25rem;
+      margin-bottom: 1.5rem;
+      border-left: 4px solid var(--gold);
+    }
+
+    .saint-section h3 {
+      font-size: 1.15rem;
+      color: var(--accent);
+      margin-bottom: 0.3rem;
+    }
+
+    .saint-meta {
+      font-family: system-ui, sans-serif;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-bottom: 0.75rem;
+    }
+
+    .saint-meta span { margin-right: 1rem; }
+
+    .saint-bio {
+      font-size: 0.92rem;
+      line-height: 1.7;
+      color: var(--text);
+    }
+
+    /* Art Images */
+    .art-section h3 {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 0.75rem;
+      font-family: system-ui, sans-serif;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-size: 0.8rem;
+    }
+
+    .art-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 0.75rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .art-card {
+      border-radius: var(--radius);
+      overflow: hidden;
+      border: 1px solid var(--border);
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+
+    .art-card:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
+
+    .art-card img {
+      width: 100%;
+      aspect-ratio: 1;
+      object-fit: cover;
+      display: block;
+      background: var(--bg);
+    }
+
+    .art-card .art-label {
+      padding: 0.4rem 0.5rem;
+      font-family: system-ui, sans-serif;
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* Prayers */
+    .prayers-section h3 {
+      font-size: 0.8rem;
+      font-weight: 600;
+      margin-bottom: 0.75rem;
+      font-family: system-ui, sans-serif;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .prayer-list { list-style: none; }
+
+    .prayer-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.6rem 0;
+      border-bottom: 1px solid var(--border);
+      cursor: pointer;
+      transition: background 0.15s;
+      border-radius: 4px;
+      padding-left: 0.5rem;
+    }
+
+    .prayer-item:hover { background: var(--bg); }
+
+    .prayer-item:last-child { border-bottom: none; }
+
+    .prayer-hour-badge {
+      background: var(--accent);
+      color: white;
+      padding: 0.15rem 0.5rem;
+      border-radius: 3px;
+      font-family: system-ui, sans-serif;
+      font-size: 0.65rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      white-space: nowrap;
+      min-width: 80px;
+      text-align: center;
+    }
+
+    .prayer-title {
+      font-size: 0.9rem;
+      color: var(--text);
+    }
+
+    /* Prayer detail modal */
+    .prayer-detail-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+
+    .prayer-detail-overlay.visible { display: flex; }
+
+    .prayer-detail-box {
+      background: var(--surface);
+      border-radius: var(--radius);
+      max-width: 700px;
+      width: 100%;
+      max-height: 80vh;
+      overflow-y: auto;
+      padding: 2rem;
+      position: relative;
+    }
+
+    .prayer-detail-box .close-btn {
+      position: absolute;
+      top: 0.75rem;
+      right: 1rem;
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: var(--text-muted);
+    }
+
+    .prayer-detail-box h3 {
+      font-size: 1.2rem;
+      color: var(--accent);
+      margin-bottom: 1rem;
+    }
+
+    .prayer-text {
+      font-size: 0.92rem;
+      line-height: 1.8;
+    }
+
+    .prayer-text p { margin-bottom: 0.8rem; }
+
+    /* Loading */
+    .loading {
+      text-align: center;
+      padding: 3rem;
+      color: var(--text-muted);
+      font-style: italic;
+    }
+
+    .spinner {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 2px solid var(--border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin-right: 0.5rem;
+      vertical-align: middle;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* JSON toggle */
+    .json-toggle {
+      margin-top: 1.5rem;
+      border-top: 1px solid var(--border);
+      padding-top: 1rem;
+    }
+
+    .json-toggle summary {
+      font-family: system-ui, sans-serif;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .json-toggle pre {
+      margin-top: 0.5rem;
+      padding: 1rem;
+      background: #1e1e1e;
+      color: #d4d4d4;
+      border-radius: var(--radius);
+      font-family: 'Menlo', 'Consolas', monospace;
+      font-size: 0.72rem;
+      line-height: 1.5;
+      overflow-x: auto;
+      max-height: 400px;
+      overflow-y: auto;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Divine Office — Sanity CMS Data Preview</h1>
+  <p>Developer reference &middot; Sanity project <code>hx1r1wkd</code> &middot; production dataset</p>
+</header>
+
+<div class="container">
+  <div class="calendar-panel">
+    <div class="month-nav">
+      <button id="prevMonth">&larr;</button>
+      <span class="month-label" id="monthLabel"></span>
+      <button id="nextMonth">&rarr;</button>
+    </div>
+    <div class="weekday-headers">
+      <span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span>
+      <span>Thu</span><span>Fri</span><span>Sat</span>
+    </div>
+    <div class="calendar-grid" id="calendarGrid"></div>
+    <div class="calendar-legend">
+      <span><span class="legend-dot" style="background:var(--green)"></span> Has prayers</span>
+      <span>✦ Saint of the day</span>
+    </div>
+    <div class="stats-bar" id="statsBar"></div>
+  </div>
+
+  <div class="detail-panel empty" id="detailPanel">
+    <span>Select a date to view the Divine Office</span>
+  </div>
+</div>
+
+<div class="prayer-detail-overlay" id="prayerOverlay">
+  <div class="prayer-detail-box">
+    <button class="close-btn" id="closePrayer">&times;</button>
+    <h3 id="prayerDetailTitle"></h3>
+    <div class="prayer-text" id="prayerDetailText"></div>
+  </div>
+</div>
+
+<script>
+// ---------- Config ----------
+const SANITY_PROJECT = 'hx1r1wkd';
+const SANITY_DATASET = 'production';
+const API_VERSION = '2024-01-01';
+const TOKEN = 'sklJzgvKijYnT3hGAJIMwjb4tGwcJE0MGYqIYE0z6L56kNe1dxkiZyXixkhz88PGULYuCqYVBmCEXgtdXzs8P9vZV3tAzv8XipvY4UimNOpBUsoTewbK1F16tNVc9gSZ1dcdFRkEW3iofuINpXEICZa6QwJvD57tFahvZkf2QeGs5T5C9zli';
+
+function sanityUrl(query, params = {}) {
+  const encoded = encodeURIComponent(query);
+  let url = `https://${SANITY_PROJECT}.api.sanity.io/v${API_VERSION}/data/query/${SANITY_DATASET}?query=${encoded}`;
+  for (const [k, v] of Object.entries(params)) {
+    url += `&$${k}="${encodeURIComponent(v)}"`;
+  }
+  return url;
+}
+
+async function sanityFetch(query, params = {}) {
+  const resp = await fetch(sanityUrl(query, params), {
+    headers: { 'Authorization': `Bearer ${TOKEN}` }
+  });
+  const data = await resp.json();
+  return data.result;
+}
+
+// ---------- State ----------
+let currentYear = 2026;
+let currentMonth = 2; // 0-indexed: March = 2
+let selectedDate = null;
+let monthCache = {};
+
+// ---------- Calendar ----------
+const MONTHS = ['January','February','March','April','May','June',
+  'July','August','September','October','November','December'];
+
+function todayStr() {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+
+async function loadMonth(year, month) {
+  const key = `${year}-${month}`;
+  if (monthCache[key]) return monthCache[key];
+
+  const mm = String(month + 1).padStart(2, '0');
+  const start = `${year}-${mm}-01`;
+  const end = `${year}-${mm}-31`;
+
+  const docs = await sanityFetch(
+    `*[_type == "dailyOffice" && date >= $start && date <= $end]{
+      _id, date, dayOfWeek, description, color, prayerCount,
+      "hasSaint": defined(saintRef),
+      "artCount": count(artImages)
+    } | order(date asc)`,
+    { start, end }
+  );
+
+  const byDate = {};
+  for (const d of docs) { byDate[d.date] = d; }
+  monthCache[key] = byDate;
+  return byDate;
+}
+
+async function renderCalendar() {
+  const grid = document.getElementById('calendarGrid');
+  const label = document.getElementById('monthLabel');
+  label.textContent = `${MONTHS[currentMonth]} ${currentYear}`;
+
+  grid.innerHTML = '<div class="loading"><span class="spinner"></span></div>';
+
+  const monthData = await loadMonth(currentYear, currentMonth);
+  const today = todayStr();
+
+  const firstDay = new Date(currentYear, currentMonth, 1).getDay();
+  const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+
+  let html = '';
+
+  // Empty cells before first day
+  for (let i = 0; i < firstDay; i++) {
+    html += '<div class="day-cell empty"></div>';
+  }
+
+  for (let d = 1; d <= daysInMonth; d++) {
+    const dateStr = `${currentYear}-${String(currentMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const info = monthData[dateStr];
+    const classes = ['day-cell'];
+
+    if (dateStr === today) classes.push('today');
+    if (dateStr === selectedDate) classes.push('selected');
+    if (info && info.prayerCount > 0) classes.push('has-data');
+    if (info && info.hasSaint) classes.push('has-saint');
+
+    html += `<div class="${classes.join(' ')}" data-date="${dateStr}">${d}</div>`;
+  }
+
+  grid.innerHTML = html;
+
+  // Stats
+  const dates = Object.values(monthData);
+  const statsBar = document.getElementById('statsBar');
+  const withPrayers = dates.filter(d => d.prayerCount > 0).length;
+  const withSaints = dates.filter(d => d.hasSaint).length;
+  const withArt = dates.filter(d => d.artCount > 0).length;
+
+  statsBar.innerHTML = `
+    <div>Days: <span class="stat-val">${dates.length}</span></div>
+    <div>With prayers: <span class="stat-val">${withPrayers}</span></div>
+    <div>With saints: <span class="stat-val">${withSaints}</span></div>
+    <div>With art: <span class="stat-val">${withArt}</span></div>
+  `;
+
+  // Click handlers
+  grid.querySelectorAll('.day-cell:not(.empty)').forEach(cell => {
+    cell.addEventListener('click', () => {
+      selectedDate = cell.dataset.date;
+      grid.querySelectorAll('.day-cell').forEach(c => c.classList.remove('selected'));
+      cell.classList.add('selected');
+      loadDay(selectedDate);
+    });
+  });
+}
+
+// ---------- Day Detail ----------
+async function loadDay(dateStr) {
+  const panel = document.getElementById('detailPanel');
+  panel.className = 'detail-panel';
+  panel.innerHTML = '<div class="loading"><span class="spinner"></span> Loading&hellip;</div>';
+
+  const doc = await sanityFetch(
+    `*[_type == "dailyOffice" && date == $date][0]{
+      _id, date, dayOfWeek, description, color, prayerCount, image,
+      prayers,
+      artImages,
+      "saint": saintRef->{
+        _id, name, shortBio, rank, liturgicalColor,
+        feastDay, slug
+      }
+    }`,
+    { date: dateStr }
+  );
+
+  if (!doc) {
+    panel.innerHTML = `<div class="loading">No data for ${dateStr}</div>`;
+    return;
+  }
+
+  let html = '';
+
+  // Date header
+  const displayDate = new Date(dateStr + 'T12:00:00').toLocaleDateString('en-US', {
+    weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+  });
+
+  const colorClass = doc.color ? `color-${doc.color.replace('#','').toLowerCase()}` : '';
+
+  html += `<div class="date-header">
+    <div class="day-of-week">${doc.dayOfWeek || ''}</div>
+    <h2>${displayDate}</h2>
+    <div class="description">${doc.description || ''}</div>
+  </div>`;
+
+  // Saint section
+  if (doc.saint) {
+    const s = doc.saint;
+    const saintName = typeof s.name === 'string' ? s.name : (s.name?.en || s.name?.current || JSON.stringify(s.name));
+    const colorBadge = s.liturgicalColor
+      ? `<span class="liturgical-color-badge color-${s.liturgicalColor.toLowerCase()}">${s.liturgicalColor}</span>`
+      : '';
+
+    html += `<div class="saint-section">
+      <h3>${saintName}</h3>
+      <div class="saint-meta">
+        <span>${s.rank || ''}</span>
+        ${s.feastDay ? `<span>Feast: ${MONTHS[(s.feastDay.month || 1) - 1]} ${s.feastDay.day}</span>` : ''}
+        ${colorBadge}
+      </div>
+      ${s.shortBio ? `<div class="saint-bio">${truncate(s.shortBio, 600)}</div>` : ''}
+    </div>`;
+  }
+
+  // Art images
+  if (doc.artImages && doc.artImages.length > 0) {
+    html += `<div class="art-section"><h3>Liturgical Art (${doc.artImages.length} images)</h3><div class="art-grid">`;
+    for (const img of doc.artImages) {
+      const src = img.thumbnail || img.url || '';
+      const title = img.title || img.source || '';
+      if (src) {
+        html += `<div class="art-card">
+          <img src="${escHtml(src)}" alt="${escHtml(title)}" loading="lazy"
+               onerror="this.style.display='none'">
+          <div class="art-label" title="${escHtml(title)}">${escHtml(title)}</div>
+        </div>`;
+      }
+    }
+    html += '</div></div>';
+  }
+
+  // Prayers
+  if (doc.prayers && doc.prayers.length > 0) {
+    html += `<div class="prayers-section"><h3>Prayer Hours (${doc.prayers.length})</h3><ul class="prayer-list">`;
+    for (const p of doc.prayers) {
+      const title = p.title || '(untitled)';
+      const ref = p.templateRef || '';
+      html += `<li class="prayer-item" data-ref="${escHtml(ref)}">
+        <span class="prayer-hour-badge">${formatHour(title)}</span>
+        <span class="prayer-title">${escHtml(title)}</span>
+      </li>`;
+    }
+    html += '</ul></div>';
+  }
+
+  // Main image from divineoffice.org
+  if (doc.image && typeof doc.image === 'object' && doc.image.url) {
+    html += `<div class="art-section" style="margin-top:1.5rem">
+      <h3>Daily Image (divineoffice.org)</h3>
+      <div class="art-grid">
+        <div class="art-card">
+          <img src="${escHtml(doc.image.url)}" alt="Daily image" loading="lazy"
+               onerror="this.style.display='none'">
+          <div class="art-label">${escHtml(doc.image.description || 'divineoffice.org')}</div>
+        </div>
+      </div>
+    </div>`;
+  }
+
+  // Raw JSON toggle
+  html += `<details class="json-toggle">
+    <summary>View raw JSON</summary>
+    <pre>${escHtml(JSON.stringify(doc, null, 2))}</pre>
+  </details>`;
+
+  panel.innerHTML = html;
+
+  // Prayer click handlers
+  panel.querySelectorAll('.prayer-item[data-ref]').forEach(item => {
+    item.addEventListener('click', () => {
+      const ref = item.dataset.ref;
+      if (ref) loadPrayer(ref);
+    });
+  });
+}
+
+// ---------- Prayer Detail ----------
+async function loadPrayer(templateId) {
+  const overlay = document.getElementById('prayerOverlay');
+  const titleEl = document.getElementById('prayerDetailTitle');
+  const textEl = document.getElementById('prayerDetailText');
+
+  overlay.classList.add('visible');
+  titleEl.textContent = 'Loading…';
+  textEl.innerHTML = '<div class="loading"><span class="spinner"></span></div>';
+
+  const doc = await sanityFetch(
+    `*[_type == "divineOfficeHourModern" && _id == $id][0]{
+      hour, dayType, season, fullTextHtml, fullTextPlain, language
+    }`,
+    { id: templateId }
+  );
+
+  if (!doc) {
+    titleEl.textContent = 'Prayer not found';
+    textEl.innerHTML = `<p>Template ID: ${templateId}</p>`;
+    return;
+  }
+
+  titleEl.textContent = `${formatHour(doc.hour || '')} — ${doc.season || ''} / ${doc.dayType || ''}`;
+
+  if (doc.fullTextHtml) {
+    textEl.innerHTML = doc.fullTextHtml;
+  } else if (doc.fullTextPlain) {
+    textEl.innerHTML = `<pre style="white-space:pre-wrap;font-family:Georgia,serif">${escHtml(doc.fullTextPlain)}</pre>`;
+  } else {
+    textEl.innerHTML = '<p>No prayer text available.</p>';
+  }
+}
+
+// ---------- Helpers ----------
+function escHtml(str) {
+  const div = document.createElement('div');
+  div.textContent = str || '';
+  return div.innerHTML;
+}
+
+function truncate(str, max) {
+  if (!str || str.length <= max) return str || '';
+  return str.substring(0, max) + '…';
+}
+
+function formatHour(hour) {
+  const map = {
+    'aboutToday': 'About Today',
+    'officeOfReadings': 'Office of Readings',
+    'morningPrayer': 'Morning Prayer',
+    'middayPrayer': 'Midday Prayer',
+    'eveningPrayer': 'Evening Prayer',
+    'nightPrayer': 'Night Prayer',
+    'compline': 'Compline',
+  };
+  return map[hour] || hour || '';
+}
+
+// ---------- Event Listeners ----------
+document.getElementById('prevMonth').addEventListener('click', () => {
+  currentMonth--;
+  if (currentMonth < 0) { currentMonth = 11; currentYear--; }
+  renderCalendar();
+});
+
+document.getElementById('nextMonth').addEventListener('click', () => {
+  currentMonth++;
+  if (currentMonth > 11) { currentMonth = 0; currentYear++; }
+  renderCalendar();
+});
+
+document.getElementById('closePrayer').addEventListener('click', () => {
+  document.getElementById('prayerOverlay').classList.remove('visible');
+});
+
+document.getElementById('prayerOverlay').addEventListener('click', (e) => {
+  if (e.target === e.currentTarget) {
+    e.currentTarget.classList.remove('visible');
+  }
+});
+
+// ---------- Init ----------
+renderCalendar();
+
+// Auto-select today if data exists
+(async () => {
+  const today = todayStr();
+  const parts = today.split('-');
+  const y = parseInt(parts[0]);
+  const m = parseInt(parts[1]) - 1;
+  if (y === currentYear && m === currentMonth) {
+    selectedDate = today;
+    await renderCalendar();
+    loadDay(today);
+  }
+})();
+</script>
+
+</body>
+</html>
