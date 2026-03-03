@@ -545,6 +545,7 @@ const Q_MONTH = `*[_type == "dailyOffice" && date >= $start && date <= $end]{
 const Q_OFFICE = `*[_type == "dailyOffice" && date == $date][0]{
   _id, date, dayOfWeek, description, color, prayerCount,
   image{url, caption},
+  artImages[]{source, url, thumbnail, title, pageUrl, _key},
   prayers[]{templateRef, title, sourceId, audioRefs[]},
   muxAudioCount, muxAudioRefs[]{prayerTitle, hourSlug, muxAssetRef, muxPlaybackId, mp3Url, duration, sizeBytes}
 }`;
@@ -703,8 +704,10 @@ function renderDetailPanel(dateStr, data) {
   // 2. Saint of the Day
   if (saint) html += renderSaintSection(saint);
 
-  // 3. Daily Image
-  if (office && office.image && office.image.url) html += renderImageSection(office.image);
+  // 3. Daily Image / Gallery
+  const hasImage = office && office.image && office.image.url;
+  const hasArt = office && office.artImages && office.artImages.length > 0;
+  if (hasImage || hasArt) html += renderImageSection(office.image, office.artImages);
 
   // 4. Divine Office Audio
   if (office && office.muxAudioRefs && office.muxAudioRefs.length > 0) {
@@ -777,17 +780,37 @@ function renderSaintSection(saint) {
   </div>`;
 }
 
-function renderImageSection(image) {
-  return `<div class="content-section">
-    <div class="section-heading"><span class="section-icon">\ud83d\uddbc</span> Daily Image</div>
-    <div class="art-grid">
-      <div class="art-card">
-        <img src="${escHtml(image.url)}" alt="${escHtml(image.caption || 'Daily image')}" loading="lazy"
-             onerror="this.parentElement.style.display='none'">
-        <div class="art-label">${escHtml(image.caption || 'divineoffice.org')}</div>
-      </div>
-    </div>
-  </div>`;
+function renderImageSection(image, artImages) {
+  let html = `<div class="content-section">
+    <div class="section-heading"><span class="section-icon">\ud83d\uddbc</span> Saint &amp; Liturgical Gallery</div>
+    <div class="art-grid">`;
+
+  // Primary image from divineoffice.org
+  if (image && image.url) {
+    html += `<div class="art-card">
+      <img src="${escHtml(image.url)}" alt="${escHtml(image.caption || 'Daily image')}" loading="lazy"
+           onerror="this.parentElement.style.display='none'">
+      <div class="art-label">${escHtml(image.caption || 'divineoffice.org')}</div>
+    </div>`;
+  }
+
+  // Gallery images from multiple sources
+  if (artImages && artImages.length > 0) {
+    for (const img of artImages) {
+      const src = img.thumbnail || img.url;
+      if (!src) continue;
+      html += `<div class="art-card">
+        <a href="${escHtml(img.pageUrl || img.url)}" target="_blank" rel="noopener">
+          <img src="${escHtml(src)}" alt="${escHtml(img.title || img.source || '')}" loading="lazy"
+               onerror="this.parentElement.parentElement.style.display='none'">
+        </a>
+        <div class="art-label">${escHtml(img.source || '')}${img.title ? ' — ' + escHtml(img.title) : ''}</div>
+      </div>`;
+    }
+  }
+
+  html += '</div></div>';
+  return html;
 }
 
 function renderAudioSection(muxRefs, count) {
