@@ -556,13 +556,13 @@ const Q_MEDITATION = `*[_type == "dailyMeditation" && date == $date && language 
 }`;
 
 const Q_READING = `*[_type == "dailyReading" && date == $date && language == "en"][0]{
-  _id, liturgicalDay, dayOfWeek, lectionaryNumber,
+  _id, liturgicalDay, dayOfWeek, lectionaryNumber, sourceUrl,
   reading1{reference, url, text},
   responsorialPsalm{reference, url, refrain, text},
   verseBeforeGospel{reference, url, text},
   reading2{reference, url, text},
   gospel{reference, url, text},
-  audioMp3Url, audioDuration, copyrightNotice,
+  copyrightNotice,
   optionalMemorials[]{name, url}
 }`;
 
@@ -870,10 +870,18 @@ function renderReadingSection(rdg) {
   let html = `<div class="content-section">
     <div class="section-heading"><span class="section-icon">\u2626</span> Mass Readings</div>`;
 
-  if (rdg.liturgicalDay) {
-    html += `<div style="font-size:0.9rem;margin-bottom:0.75rem;color:var(--text)">${escHtml(rdg.liturgicalDay)}`;
+  // Lectionary info
+  const hasLitDay = rdg.liturgicalDay && !rdg.liturgicalDay.startsWith('Menu:');
+  if (hasLitDay || rdg.lectionaryNumber) {
+    html += '<div style="font-size:0.9rem;margin-bottom:0.75rem;color:var(--text)">';
+    if (hasLitDay) html += escHtml(rdg.liturgicalDay);
     if (rdg.lectionaryNumber) html += ` <span style="color:var(--text-muted);font-size:0.8rem">(Lectionary #${rdg.lectionaryNumber})</span>`;
     html += '</div>';
+  }
+
+  // Source link to USCCB page
+  if (rdg.sourceUrl) {
+    html += `<div style="margin-bottom:1rem"><a href="${escHtml(rdg.sourceUrl)}" target="_blank" rel="noopener" style="font-family:system-ui,sans-serif;font-size:0.8rem;color:var(--accent);text-decoration:none">View all readings on USCCB.org \u2197</a></div>`;
   }
 
   if (rdg.optionalMemorials && rdg.optionalMemorials.length > 0) {
@@ -884,14 +892,9 @@ function renderReadingSection(rdg) {
     html += '</div>';
   }
 
-  // Reading audio
-  if (rdg.audioMp3Url) {
-    html += audioPlayerHtml(null, rdg.audioMp3Url, rdg.audioDuration, null);
-  }
-
   // Reading 1
   if (rdg.reading1) {
-    html += renderReadingBlock('First Reading', rdg.reading1, '');
+    html += renderReadingBlock('First Reading', rdg.reading1, '', rdg.sourceUrl);
   }
 
   // Responsorial Psalm
@@ -901,30 +904,29 @@ function renderReadingSection(rdg) {
       <div class="reading-ref">${escHtml(ps.reference || 'Responsorial Psalm')}</div>
       ${ps.refrain ? `<div class="psalm-refrain">R. ${escHtml(ps.refrain)}</div>` : ''}
       ${ps.text ? `<div class="reading-text">${escHtml(ps.text)}</div>` : ''}
-      ${ps.url ? `<a href="${escHtml(ps.url)}" target="_blank" rel="noopener" class="reading-link">USCCB \u2197</a>` : ''}
     </div>`;
   }
 
-  // Reading 2 (optional)
+  // Reading 2 (optional — Sundays/solemnities)
   if (rdg.reading2 && rdg.reading2.reference) {
-    html += renderReadingBlock('Second Reading', rdg.reading2, '');
+    html += renderReadingBlock('Second Reading', rdg.reading2, '', rdg.sourceUrl);
   }
 
   // Verse Before Gospel
-  if (rdg.verseBeforeGospel && rdg.verseBeforeGospel.text) {
+  if (rdg.verseBeforeGospel && (rdg.verseBeforeGospel.reference || rdg.verseBeforeGospel.text)) {
     html += `<div class="reading-block" style="border-left-color:var(--gold)">
       <div class="reading-ref" style="color:var(--gold)">${escHtml(rdg.verseBeforeGospel.reference || 'Verse Before Gospel')}</div>
-      <div class="reading-text">${escHtml(rdg.verseBeforeGospel.text)}</div>
+      ${rdg.verseBeforeGospel.text ? `<div class="reading-text">${escHtml(rdg.verseBeforeGospel.text)}</div>` : ''}
     </div>`;
   }
 
   // Gospel
   if (rdg.gospel) {
-    html += renderReadingBlock('Gospel', rdg.gospel, 'gospel');
+    html += renderReadingBlock('Gospel', rdg.gospel, 'gospel', rdg.sourceUrl);
   }
 
   // Copyright
-  if (rdg.copyrightNotice) {
+  if (rdg.copyrightNotice && !rdg.copyrightNotice.startsWith('Menu:')) {
     html += `<div class="copyright-notice">${escHtml(rdg.copyrightNotice)}</div>`;
   }
 
@@ -932,11 +934,12 @@ function renderReadingSection(rdg) {
   return html;
 }
 
-function renderReadingBlock(label, rdg, extraClass) {
+function renderReadingBlock(label, rdg, extraClass, fallbackUrl) {
+  const linkUrl = rdg.url || fallbackUrl || '';
   return `<div class="reading-block ${extraClass}">
     <div class="reading-ref">${escHtml(rdg.reference || label)}</div>
     ${rdg.text ? `<div class="reading-text">${escHtml(rdg.text)}</div>` : ''}
-    ${rdg.url ? `<a href="${escHtml(rdg.url)}" target="_blank" rel="noopener" class="reading-link">USCCB \u2197</a>` : ''}
+    ${linkUrl ? `<a href="${escHtml(linkUrl)}" target="_blank" rel="noopener" class="reading-link">Read on USCCB \u2197</a>` : ''}
   </div>`;
 }
 
