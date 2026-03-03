@@ -283,8 +283,12 @@
     .reading-block.gospel .reading-ref { color: var(--red); }
 
     .reading-text {
-      font-size: 0.9rem; line-height: 1.7; max-height: 400px; overflow-y: auto;
-      white-space: pre-wrap;
+      font-size: 0.95rem; line-height: 1.8; white-space: pre-wrap;
+      margin-top: 0.5rem;
+    }
+    .reading-text-placeholder {
+      font-size: 0.85rem; color: var(--text-muted); font-style: italic;
+      margin-top: 0.4rem;
     }
 
     .psalm-refrain {
@@ -292,11 +296,7 @@
       padding: 0.5rem 0; border-bottom: 1px solid var(--border); margin-bottom: 0.5rem;
     }
 
-    .reading-link {
-      display: inline-block; margin-top: 0.4rem; font-family: system-ui, sans-serif;
-      font-size: 0.7rem; color: var(--accent); text-decoration: none;
-    }
-    .reading-link:hover { text-decoration: underline; }
+    /* reading-link removed — readings display inline, no click-through */
 
     .copyright-notice {
       font-family: system-ui, sans-serif; font-size: 0.65rem; color: var(--text-muted);
@@ -879,11 +879,6 @@ function renderReadingSection(rdg) {
     html += '</div>';
   }
 
-  // Source link to USCCB page
-  if (rdg.sourceUrl) {
-    html += `<div style="margin-bottom:1rem"><a href="${escHtml(rdg.sourceUrl)}" target="_blank" rel="noopener" style="font-family:system-ui,sans-serif;font-size:0.8rem;color:var(--accent);text-decoration:none">View all readings on USCCB.org \u2197</a></div>`;
-  }
-
   if (rdg.optionalMemorials && rdg.optionalMemorials.length > 0) {
     html += '<div class="optional-memorials">Optional Memorials: ';
     html += rdg.optionalMemorials.map(m =>
@@ -894,35 +889,39 @@ function renderReadingSection(rdg) {
 
   // Reading 1
   if (rdg.reading1) {
-    html += renderReadingBlock('First Reading', rdg.reading1, '', rdg.sourceUrl);
+    html += renderReadingBlock('First Reading', rdg.reading1, '');
   }
 
   // Responsorial Psalm
   if (rdg.responsorialPsalm) {
     const ps = rdg.responsorialPsalm;
+    const hasPsText = ps.text && ps.text.length > 50;
     html += `<div class="reading-block psalm">
       <div class="reading-ref">${escHtml(ps.reference || 'Responsorial Psalm')}</div>
       ${ps.refrain ? `<div class="psalm-refrain">R. ${escHtml(ps.refrain)}</div>` : ''}
-      ${ps.text ? `<div class="reading-text">${escHtml(ps.text)}</div>` : ''}
+      ${hasPsText
+        ? `<div class="reading-text">${escHtml(ps.text)}</div>`
+        : `<div class="reading-text-placeholder">Full psalm text coming soon.</div>`}
     </div>`;
   }
 
   // Reading 2 (optional — Sundays/solemnities)
   if (rdg.reading2 && rdg.reading2.reference) {
-    html += renderReadingBlock('Second Reading', rdg.reading2, '', rdg.sourceUrl);
+    html += renderReadingBlock('Second Reading', rdg.reading2, '');
   }
 
   // Verse Before Gospel
   if (rdg.verseBeforeGospel && (rdg.verseBeforeGospel.reference || rdg.verseBeforeGospel.text)) {
+    const hasVText = rdg.verseBeforeGospel.text && rdg.verseBeforeGospel.text.length > 20;
     html += `<div class="reading-block" style="border-left-color:var(--gold)">
       <div class="reading-ref" style="color:var(--gold)">${escHtml(rdg.verseBeforeGospel.reference || 'Verse Before Gospel')}</div>
-      ${rdg.verseBeforeGospel.text ? `<div class="reading-text">${escHtml(rdg.verseBeforeGospel.text)}</div>` : ''}
+      ${hasVText ? `<div class="reading-text">${escHtml(rdg.verseBeforeGospel.text)}</div>` : ''}
     </div>`;
   }
 
   // Gospel
   if (rdg.gospel) {
-    html += renderReadingBlock('Gospel', rdg.gospel, 'gospel', rdg.sourceUrl);
+    html += renderReadingBlock('Gospel', rdg.gospel, 'gospel');
   }
 
   // Copyright
@@ -934,12 +933,13 @@ function renderReadingSection(rdg) {
   return html;
 }
 
-function renderReadingBlock(label, rdg, extraClass, fallbackUrl) {
-  const linkUrl = rdg.url || fallbackUrl || '';
+function renderReadingBlock(label, rdg, extraClass) {
+  const hasText = rdg.text && rdg.text.length > 50; // real text, not just a citation
   return `<div class="reading-block ${extraClass}">
     <div class="reading-ref">${escHtml(rdg.reference || label)}</div>
-    ${rdg.text ? `<div class="reading-text">${escHtml(rdg.text)}</div>` : ''}
-    ${linkUrl ? `<a href="${escHtml(linkUrl)}" target="_blank" rel="noopener" class="reading-link">Read on USCCB \u2197</a>` : ''}
+    ${hasText
+      ? `<div class="reading-text">${escHtml(rdg.text)}</div>`
+      : `<div class="reading-text-placeholder">Full reading text coming soon.</div>`}
   </div>`;
 }
 
