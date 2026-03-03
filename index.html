@@ -567,7 +567,8 @@ const Q_READING = `*[_type == "dailyReading" && date == $date && language == "en
   optionalMemorials[]{name, url}
 }`;
 
-const Q_PRAYER_DETAIL = `*[_type == "divineOfficeHourModern" && _id == $id][0]{
+const Q_PRAYER_DETAIL = `*[_id == $id][0]{
+  _type, _id, title, canonicalTitle,
   hour, dayType, season,
   openingVersicle{versicle, response},
   hymn{title, text},
@@ -577,7 +578,8 @@ const Q_PRAYER_DETAIL = `*[_type == "divineOfficeHourModern" && _id == $id][0]{
   canticle{name, antiphon, text},
   intercessions{introduction, petitions[]},
   collect{text},
-  fullTextHtml, fullTextPlain
+  fullTextHtml, fullTextPlain,
+  contentHtml, contentText
 }`;
 
 async function querySaintByDate(dateStr) {
@@ -986,14 +988,16 @@ async function loadPrayerDetail(templateId) {
     return;
   }
 
-  titleEl.textContent = formatHour(detail.hour) || 'Prayer';
+  titleEl.textContent = formatHour(detail.hour) || detail.title || detail.canonicalTitle || 'Prayer';
 
   let html = '';
 
-  // Meta
-  const metaParts = [detail.season, detail.dayType].filter(Boolean);
-  if (metaParts.length) {
-    html += `<div style="font-family:system-ui,sans-serif;font-size:0.75rem;color:var(--text-muted);margin-bottom:1rem;text-transform:capitalize">${escHtml(metaParts.join(' \u00b7 '))}</div>`;
+  // Meta (only show if we have structured fields, not for prayerTemplate type)
+  if (detail._type !== 'prayerTemplate') {
+    const metaParts = [detail.season, detail.dayType].filter(Boolean);
+    if (metaParts.length) {
+      html += `<div style="font-family:system-ui,sans-serif;font-size:0.75rem;color:var(--text-muted);margin-bottom:1rem;text-transform:capitalize">${escHtml(metaParts.join(' \u00b7 '))}</div>`;
+    }
   }
 
   // Opening Versicle
@@ -1077,11 +1081,13 @@ async function loadPrayerDetail(templateId) {
     </div>`;
   }
 
-  // Fallback to full text
-  if (!html && detail.fullTextHtml) {
-    html = `<div class="prayer-text">${detail.fullTextHtml}</div>`;
-  } else if (!html && detail.fullTextPlain) {
-    html = `<div class="prayer-text"><pre style="white-space:pre-wrap;font-family:Georgia,serif">${escHtml(detail.fullTextPlain)}</pre></div>`;
+  // Fallback to full text (try both field naming conventions)
+  const fallbackHtml = detail.fullTextHtml || detail.contentHtml || '';
+  const fallbackPlain = detail.fullTextPlain || detail.contentText || '';
+  if (!html && fallbackHtml) {
+    html = `<div class="prayer-text">${fallbackHtml}</div>`;
+  } else if (!html && fallbackPlain) {
+    html = `<div class="prayer-text"><pre style="white-space:pre-wrap;font-family:Georgia,serif">${escHtml(fallbackPlain)}</pre></div>`;
   }
 
   if (!html) {
