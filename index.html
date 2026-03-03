@@ -990,15 +990,8 @@ async function loadPrayerDetail(templateId) {
 
   titleEl.textContent = formatHour(detail.hour) || detail.title || detail.canonicalTitle || 'Prayer';
 
+  let metaHtml = '';
   let html = '';
-
-  // Meta (only show if we have structured fields, not for prayerTemplate type)
-  if (detail._type !== 'prayerTemplate') {
-    const metaParts = [detail.season, detail.dayType].filter(Boolean);
-    if (metaParts.length) {
-      html += `<div style="font-family:system-ui,sans-serif;font-size:0.75rem;color:var(--text-muted);margin-bottom:1rem;text-transform:capitalize">${escHtml(metaParts.join(' \u00b7 '))}</div>`;
-    }
-  }
 
   // Opening Versicle
   if (detail.openingVersicle) {
@@ -1081,13 +1074,13 @@ async function loadPrayerDetail(templateId) {
     </div>`;
   }
 
-  // Fallback to full text (try both field naming conventions)
-  const fallbackHtml = detail.fullTextHtml || detail.contentHtml || '';
-  const fallbackPlain = detail.fullTextPlain || detail.contentText || '';
-  if (!html && fallbackHtml) {
-    html = `<div class="prayer-text">${fallbackHtml}</div>`;
-  } else if (!html && fallbackPlain) {
-    html = `<div class="prayer-text"><pre style="white-space:pre-wrap;font-family:Georgia,serif">${escHtml(fallbackPlain)}</pre></div>`;
+  // If no structured sections were rendered, show full text content
+  const fullHtml = detail.fullTextHtml || detail.contentHtml || '';
+  const fullPlain = detail.fullTextPlain || detail.contentText || '';
+  if (!html && fullHtml) {
+    html = `<div class="prayer-text">${fullHtml}</div>`;
+  } else if (!html && fullPlain) {
+    html = `<div class="prayer-text"><pre style="white-space:pre-wrap;font-family:Georgia,serif">${escHtml(fullPlain)}</pre></div>`;
   }
 
   if (!html) {
