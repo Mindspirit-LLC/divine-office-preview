@@ -38,18 +38,8 @@
       text-align: center;
     }
 
-    header h1 {
-      font-size: 1.6rem;
-      font-weight: 400;
-      letter-spacing: 0.05em;
-    }
-
-    header p {
-      font-size: 0.85rem;
-      opacity: 0.8;
-      margin-top: 0.3rem;
-      font-family: system-ui, sans-serif;
-    }
+    header h1 { font-size: 1.6rem; font-weight: 400; letter-spacing: 0.05em; }
+    header p { font-size: 0.85rem; opacity: 0.8; margin-top: 0.3rem; font-family: system-ui, sans-serif; }
 
     .container {
       max-width: 1200px;
@@ -61,9 +51,7 @@
       min-height: calc(100vh - 100px);
     }
 
-    @media (max-width: 860px) {
-      .container { grid-template-columns: 1fr; }
-    }
+    @media (max-width: 860px) { .container { grid-template-columns: 1fr; } }
 
     /* --- Calendar Panel --- */
     .calendar-panel {
@@ -76,64 +64,30 @@
       align-self: start;
     }
 
-    .month-nav {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 1rem;
-    }
+    .month-nav { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; }
 
     .month-nav button {
-      background: none;
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      padding: 0.3rem 0.8rem;
-      cursor: pointer;
-      font-size: 0.9rem;
-      color: var(--text);
-      transition: background 0.15s;
+      background: none; border: 1px solid var(--border); border-radius: 4px;
+      padding: 0.3rem 0.8rem; cursor: pointer; font-size: 0.9rem;
+      color: var(--text); transition: background 0.15s;
     }
-
     .month-nav button:hover { background: var(--bg); }
-
-    .month-nav .month-label {
-      font-size: 1.1rem;
-      font-weight: 600;
-    }
+    .month-nav .month-label { font-size: 1.1rem; font-weight: 600; }
 
     .weekday-headers {
-      display: grid;
-      grid-template-columns: repeat(7, 1fr);
-      text-align: center;
-      font-family: system-ui, sans-serif;
-      font-size: 0.7rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      color: var(--text-muted);
-      margin-bottom: 0.4rem;
+      display: grid; grid-template-columns: repeat(7, 1fr); text-align: center;
+      font-family: system-ui, sans-serif; font-size: 0.7rem; font-weight: 600;
+      text-transform: uppercase; color: var(--text-muted); margin-bottom: 0.4rem;
       letter-spacing: 0.05em;
     }
 
-    .calendar-grid {
-      display: grid;
-      grid-template-columns: repeat(7, 1fr);
-      gap: 3px;
-    }
+    .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; }
 
     .day-cell {
-      aspect-ratio: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      border-radius: 4px;
-      cursor: pointer;
-      font-size: 0.9rem;
-      position: relative;
-      transition: all 0.15s;
-      border: 2px solid transparent;
+      aspect-ratio: 1; display: flex; flex-direction: column; align-items: center;
+      justify-content: center; border-radius: 4px; cursor: pointer; font-size: 0.9rem;
+      position: relative; transition: all 0.15s; border: 2px solid transparent;
     }
-
     .day-cell:hover { background: var(--bg); }
     .day-cell.empty { cursor: default; }
     .day-cell.empty:hover { background: transparent; }
@@ -141,346 +95,288 @@
     .day-cell.selected { background: var(--accent); color: white; border-color: var(--accent); }
     .day-cell.selected:hover { background: var(--accent-light); }
     .day-cell.has-data::after {
-      content: '';
-      width: 4px;
-      height: 4px;
-      border-radius: 50%;
-      background: var(--green);
-      position: absolute;
-      bottom: 4px;
+      content: ''; width: 4px; height: 4px; border-radius: 50%;
+      background: var(--green); position: absolute; bottom: 4px;
     }
     .day-cell.has-saint::before {
-      content: '✦';
-      font-size: 0.5rem;
-      color: var(--gold);
-      position: absolute;
-      top: 3px;
-      right: 5px;
+      content: '\2726'; font-size: 0.5rem; color: var(--gold);
+      position: absolute; top: 3px; right: 5px;
     }
     .day-cell.selected::after { background: white; }
     .day-cell.selected::before { color: white; }
 
     .calendar-legend {
-      display: flex;
-      gap: 1rem;
-      margin-top: 0.8rem;
-      font-family: system-ui, sans-serif;
-      font-size: 0.7rem;
-      color: var(--text-muted);
+      display: flex; gap: 1rem; margin-top: 0.8rem;
+      font-family: system-ui, sans-serif; font-size: 0.7rem; color: var(--text-muted);
     }
-
     .calendar-legend span { display: flex; align-items: center; gap: 0.3rem; }
-    .legend-dot {
-      width: 6px; height: 6px; border-radius: 50%; display: inline-block;
-    }
+    .legend-dot { width: 6px; height: 6px; border-radius: 50%; display: inline-block; }
 
     .stats-bar {
-      margin-top: 1rem;
-      padding-top: 1rem;
-      border-top: 1px solid var(--border);
-      font-family: system-ui, sans-serif;
-      font-size: 0.75rem;
-      color: var(--text-muted);
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 0.4rem;
+      margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border);
+      font-family: system-ui, sans-serif; font-size: 0.75rem; color: var(--text-muted);
+      display: grid; grid-template-columns: 1fr 1fr; gap: 0.4rem;
     }
-
     .stats-bar .stat-val { font-weight: 700; color: var(--text); }
 
     /* --- Detail Panel --- */
     .detail-panel {
-      background: var(--surface);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      padding: 2rem;
-      min-height: 400px;
+      background: var(--surface); border-radius: var(--radius);
+      box-shadow: var(--shadow); padding: 2rem; min-height: 400px;
     }
-
     .detail-panel.empty {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--text-muted);
-      font-style: italic;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--text-muted); font-style: italic;
     }
 
-    .date-header {
-      border-bottom: 2px solid var(--border);
-      padding-bottom: 1rem;
-      margin-bottom: 1.5rem;
-    }
-
-    .date-header h2 {
-      font-size: 1.5rem;
-      font-weight: 400;
-      color: var(--accent);
-    }
-
+    .date-header { border-bottom: 2px solid var(--border); padding-bottom: 1rem; margin-bottom: 1.5rem; }
+    .date-header h2 { font-size: 1.5rem; font-weight: 400; color: var(--accent); }
     .date-header .day-of-week {
-      font-family: system-ui, sans-serif;
-      font-size: 0.8rem;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      color: var(--text-muted);
-      margin-bottom: 0.3rem;
+      font-family: system-ui, sans-serif; font-size: 0.8rem; text-transform: uppercase;
+      letter-spacing: 0.1em; color: var(--text-muted); margin-bottom: 0.3rem;
     }
-
-    .date-header .description {
-      margin-top: 0.5rem;
-      font-size: 1rem;
-      color: var(--text);
-    }
+    .date-header .description { margin-top: 0.5rem; font-size: 1rem; color: var(--text); }
 
     .liturgical-color-badge {
-      display: inline-block;
-      padding: 0.15rem 0.5rem;
-      border-radius: 3px;
-      font-family: system-ui, sans-serif;
-      font-size: 0.7rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      margin-top: 0.4rem;
+      display: inline-block; padding: 0.15rem 0.5rem; border-radius: 3px;
+      font-family: system-ui, sans-serif; font-size: 0.7rem; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.05em; margin-top: 0.4rem;
     }
-
     .color-green { background: #e8f5e9; color: var(--green); }
     .color-red { background: #fce4ec; color: var(--red); }
     .color-purple, .color-violet { background: #f3e5f5; color: var(--purple); }
     .color-white { background: #f5f5f0; color: #555; }
     .color-rose { background: #fce4ec; color: #c2185b; }
 
-    /* Saint Section */
-    .saint-section {
+    /* --- Section headings --- */
+    .section-heading {
+      font-family: system-ui, sans-serif; font-size: 0.8rem; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted);
+      margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem;
+    }
+    .section-heading .section-icon { font-size: 1rem; }
+    .content-section { margin-bottom: 2rem; }
+
+    /* --- Saint Section --- */
+    .saint-card {
       background: linear-gradient(135deg, #faf7f2, #f5f0e8);
-      border-radius: var(--radius);
-      padding: 1.25rem;
-      margin-bottom: 1.5rem;
-      border-left: 4px solid var(--gold);
+      border-radius: var(--radius); padding: 1.25rem; border-left: 4px solid var(--gold);
     }
-
-    .saint-section h3 {
-      font-size: 1.15rem;
-      color: var(--accent);
-      margin-bottom: 0.3rem;
-    }
-
+    .saint-card h3 { font-size: 1.15rem; color: var(--accent); margin-bottom: 0.3rem; }
     .saint-meta {
-      font-family: system-ui, sans-serif;
-      font-size: 0.75rem;
-      color: var(--text-muted);
-      margin-bottom: 0.75rem;
+      font-family: system-ui, sans-serif; font-size: 0.75rem;
+      color: var(--text-muted); margin-bottom: 0.75rem;
     }
-
     .saint-meta span { margin-right: 1rem; }
+    .saint-bio { font-size: 0.92rem; line-height: 1.7; color: var(--text); }
 
-    .saint-bio {
-      font-size: 0.92rem;
-      line-height: 1.7;
-      color: var(--text);
-    }
-
-    /* Art Images */
-    .art-section h3 {
-      font-size: 1rem;
-      font-weight: 600;
-      margin-bottom: 0.75rem;
-      font-family: system-ui, sans-serif;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      font-size: 0.8rem;
-    }
-
+    /* --- Image Section --- */
     .art-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
       gap: 0.75rem;
-      margin-bottom: 1.5rem;
     }
-
     .art-card {
-      border-radius: var(--radius);
-      overflow: hidden;
-      border: 1px solid var(--border);
+      border-radius: var(--radius); overflow: hidden; border: 1px solid var(--border);
       transition: transform 0.15s, box-shadow 0.15s;
     }
-
     .art-card:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
-
     .art-card img {
-      width: 100%;
-      aspect-ratio: 1;
-      object-fit: cover;
-      display: block;
-      background: var(--bg);
+      width: 100%; aspect-ratio: 1; object-fit: cover; display: block; background: var(--bg);
     }
-
     .art-card .art-label {
-      padding: 0.4rem 0.5rem;
-      font-family: system-ui, sans-serif;
-      font-size: 0.7rem;
-      color: var(--text-muted);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+      padding: 0.4rem 0.5rem; font-family: system-ui, sans-serif; font-size: 0.7rem;
+      color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     }
 
-    /* Prayers */
-    .prayers-section h3 {
-      font-size: 0.8rem;
-      font-weight: 600;
-      margin-bottom: 0.75rem;
-      font-family: system-ui, sans-serif;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
+    /* --- Audio Player --- */
+    .audio-player-row {
+      display: flex; align-items: center; gap: 0.75rem;
+      padding: 0.6rem 0.5rem; border-bottom: 1px solid var(--border); border-radius: 4px;
+    }
+    .audio-player-row:last-child { border-bottom: none; }
+    .audio-player-row:hover { background: var(--bg); }
+
+    .audio-badge {
+      background: var(--accent); color: white; padding: 0.15rem 0.5rem; border-radius: 3px;
+      font-family: system-ui, sans-serif; font-size: 0.65rem; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.05em; white-space: nowrap;
+      min-width: 80px; text-align: center;
     }
 
+    .audio-info { flex: 1; min-width: 0; }
+    .audio-info .audio-title { font-size: 0.88rem; color: var(--text); }
+    .audio-info .audio-meta {
+      font-family: system-ui, sans-serif; font-size: 0.7rem; color: var(--text-muted);
+    }
+
+    .inline-audio {
+      width: 100%; margin-top: 0.4rem; height: 36px; border-radius: 4px;
+    }
+
+    .audio-download {
+      font-family: system-ui, sans-serif; font-size: 0.7rem; color: var(--accent);
+      text-decoration: none; white-space: nowrap;
+    }
+    .audio-download:hover { text-decoration: underline; }
+
+    /* --- Prayers List --- */
     .prayer-list { list-style: none; }
-
     .prayer-item {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      padding: 0.6rem 0;
-      border-bottom: 1px solid var(--border);
-      cursor: pointer;
-      transition: background 0.15s;
-      border-radius: 4px;
-      padding-left: 0.5rem;
+      display: flex; align-items: center; gap: 0.75rem; padding: 0.6rem 0;
+      border-bottom: 1px solid var(--border); cursor: pointer;
+      transition: background 0.15s; border-radius: 4px; padding-left: 0.5rem;
     }
-
     .prayer-item:hover { background: var(--bg); }
-
     .prayer-item:last-child { border-bottom: none; }
 
     .prayer-hour-badge {
-      background: var(--accent);
-      color: white;
-      padding: 0.15rem 0.5rem;
-      border-radius: 3px;
-      font-family: system-ui, sans-serif;
-      font-size: 0.65rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      white-space: nowrap;
-      min-width: 80px;
-      text-align: center;
+      background: var(--accent); color: white; padding: 0.15rem 0.5rem; border-radius: 3px;
+      font-family: system-ui, sans-serif; font-size: 0.65rem; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.05em; white-space: nowrap;
+      min-width: 80px; text-align: center;
     }
+    .prayer-title { font-size: 0.9rem; color: var(--text); }
 
-    .prayer-title {
-      font-size: 0.9rem;
-      color: var(--text);
+    /* --- Meditation Section --- */
+    .meditation-card {
+      background: linear-gradient(135deg, #f5f0e8, #ebe4d9);
+      border-radius: var(--radius); padding: 1.25rem; border-left: 4px solid var(--accent);
     }
-
-    /* Prayer detail modal */
-    .prayer-detail-overlay {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.5);
-      z-index: 1000;
-      align-items: center;
-      justify-content: center;
-      padding: 2rem;
+    .meditation-card h3 { font-size: 1.1rem; color: var(--accent); margin-bottom: 0.2rem; }
+    .meditation-card .scripture-ref {
+      font-family: system-ui, sans-serif; font-size: 0.8rem; color: var(--gold);
+      font-weight: 600; margin-bottom: 0.4rem;
     }
-
-    .prayer-detail-overlay.visible { display: flex; }
-
-    .prayer-detail-box {
-      background: var(--surface);
-      border-radius: var(--radius);
-      max-width: 700px;
-      width: 100%;
-      max-height: 80vh;
-      overflow-y: auto;
-      padding: 2rem;
-      position: relative;
+    .meditation-card .author-line {
+      font-family: system-ui, sans-serif; font-size: 0.75rem; color: var(--text-muted);
+      margin-bottom: 0.75rem;
     }
-
-    .prayer-detail-box .close-btn {
-      position: absolute;
-      top: 0.75rem;
-      right: 1rem;
-      background: none;
-      border: none;
-      font-size: 1.5rem;
-      cursor: pointer;
-      color: var(--text-muted);
+    .meditation-text {
+      font-size: 0.92rem; line-height: 1.8; max-height: 500px; overflow-y: auto;
+      padding-right: 0.5rem;
     }
+    .meditation-text p { margin-bottom: 0.8rem; }
+    .meditation-source {
+      margin-top: 0.75rem; font-family: system-ui, sans-serif; font-size: 0.7rem;
+    }
+    .meditation-source a { color: var(--accent); text-decoration: none; }
+    .meditation-source a:hover { text-decoration: underline; }
 
-    .prayer-detail-box h3 {
-      font-size: 1.2rem;
-      color: var(--accent);
+    .featured-img {
+      width: 100%; max-height: 250px; object-fit: cover; border-radius: var(--radius);
       margin-bottom: 1rem;
     }
 
-    .prayer-text {
-      font-size: 0.92rem;
-      line-height: 1.8;
+    /* --- Readings Section --- */
+    .reading-block {
+      border-left: 3px solid var(--accent); padding-left: 1rem;
+      margin-bottom: 1.25rem; background: var(--bg); padding: 1rem;
+      border-radius: 0 var(--radius) var(--radius) 0;
+    }
+    .reading-block.psalm { border-left-color: var(--gold); }
+    .reading-block.gospel { border-left-color: var(--red); }
+
+    .reading-ref {
+      font-weight: 600; color: var(--accent); font-size: 0.9rem; margin-bottom: 0.4rem;
+    }
+    .reading-block.psalm .reading-ref { color: var(--gold); }
+    .reading-block.gospel .reading-ref { color: var(--red); }
+
+    .reading-text {
+      font-size: 0.9rem; line-height: 1.7; max-height: 400px; overflow-y: auto;
+      white-space: pre-wrap;
     }
 
+    .psalm-refrain {
+      font-weight: 600; font-style: italic; color: var(--accent);
+      padding: 0.5rem 0; border-bottom: 1px solid var(--border); margin-bottom: 0.5rem;
+    }
+
+    .reading-link {
+      display: inline-block; margin-top: 0.4rem; font-family: system-ui, sans-serif;
+      font-size: 0.7rem; color: var(--accent); text-decoration: none;
+    }
+    .reading-link:hover { text-decoration: underline; }
+
+    .copyright-notice {
+      font-family: system-ui, sans-serif; font-size: 0.65rem; color: var(--text-muted);
+      margin-top: 0.75rem; padding-top: 0.5rem; border-top: 1px solid var(--border);
+      line-height: 1.5;
+    }
+
+    .optional-memorials {
+      font-family: system-ui, sans-serif; font-size: 0.8rem; color: var(--text-muted);
+      margin-bottom: 1rem;
+    }
+    .optional-memorials a { color: var(--accent); text-decoration: none; }
+
+    /* --- Prayer Detail Modal --- */
+    .prayer-detail-overlay {
+      display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5);
+      z-index: 1000; align-items: center; justify-content: center; padding: 2rem;
+    }
+    .prayer-detail-overlay.visible { display: flex; }
+
+    .prayer-detail-box {
+      background: var(--surface); border-radius: var(--radius);
+      max-width: 750px; width: 100%; max-height: 85vh;
+      overflow-y: auto; padding: 2rem; position: relative;
+    }
+    .prayer-detail-box .close-btn {
+      position: absolute; top: 0.75rem; right: 1rem; background: none;
+      border: none; font-size: 1.5rem; cursor: pointer; color: var(--text-muted);
+    }
+    .prayer-detail-box h3 { font-size: 1.2rem; color: var(--accent); margin-bottom: 1rem; }
+
+    .prayer-structured-section {
+      margin-bottom: 1.25rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border);
+    }
+    .prayer-structured-section:last-child { border-bottom: none; }
+    .prayer-section-label {
+      font-family: system-ui, sans-serif; font-size: 0.7rem; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.08em; color: var(--gold);
+      margin-bottom: 0.4rem;
+    }
+    .prayer-section-text { font-size: 0.92rem; line-height: 1.8; }
+    .prayer-section-text p { margin-bottom: 0.6rem; }
+    .antiphon { font-style: italic; color: var(--accent); margin-bottom: 0.3rem; }
+    .psalm-title { font-weight: 600; margin-bottom: 0.3rem; }
+    .glory-be { font-style: italic; color: var(--text-muted); margin-top: 0.3rem; font-size: 0.85rem; }
+    .versicle-response .v::before { content: 'V. '; font-weight: 600; color: var(--accent); }
+    .versicle-response .r::before { content: 'R. '; font-weight: 600; color: var(--accent); }
+
+    .prayer-text { font-size: 0.92rem; line-height: 1.8; }
     .prayer-text p { margin-bottom: 0.8rem; }
 
-    /* Loading */
-    .loading {
-      text-align: center;
-      padding: 3rem;
-      color: var(--text-muted);
-      font-style: italic;
-    }
-
+    /* --- Loading / Error --- */
+    .loading { text-align: center; padding: 3rem; color: var(--text-muted); font-style: italic; }
     .spinner {
-      display: inline-block;
-      width: 20px;
-      height: 20px;
-      border: 2px solid var(--border);
-      border-top-color: var(--accent);
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
-      margin-right: 0.5rem;
-      vertical-align: middle;
+      display: inline-block; width: 20px; height: 20px; border: 2px solid var(--border);
+      border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite;
+      margin-right: 0.5rem; vertical-align: middle;
     }
-
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    /* JSON toggle */
-    .json-toggle {
-      margin-top: 1.5rem;
-      border-top: 1px solid var(--border);
-      padding-top: 1rem;
-    }
+    .error-state { text-align: center; padding: 2rem; }
+    .error-state h3 { color: var(--red); margin-bottom: 0.5rem; }
 
+    /* --- JSON Toggle --- */
+    .json-toggle { margin-top: 1.5rem; border-top: 1px solid var(--border); padding-top: 1rem; }
     .json-toggle summary {
-      font-family: system-ui, sans-serif;
-      font-size: 0.75rem;
-      color: var(--text-muted);
-      cursor: pointer;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
+      font-family: system-ui, sans-serif; font-size: 0.75rem; color: var(--text-muted);
+      cursor: pointer; text-transform: uppercase; letter-spacing: 0.05em;
     }
-
     .json-toggle pre {
-      margin-top: 0.5rem;
-      padding: 1rem;
-      background: #1e1e1e;
-      color: #d4d4d4;
-      border-radius: var(--radius);
-      font-family: 'Menlo', 'Consolas', monospace;
-      font-size: 0.72rem;
-      line-height: 1.5;
-      overflow-x: auto;
-      max-height: 400px;
-      overflow-y: auto;
+      margin-top: 0.5rem; padding: 1rem; background: #1e1e1e; color: #d4d4d4;
+      border-radius: var(--radius); font-family: 'Menlo', 'Consolas', monospace;
+      font-size: 0.72rem; line-height: 1.5; overflow-x: auto; max-height: 400px; overflow-y: auto;
     }
   </style>
 </head>
 <body>
 
 <header>
-  <h1>Divine Office — Sanity CMS Data Preview</h1>
+  <h1>Divine Office &mdash; Sanity CMS Data Preview</h1>
   <p>Developer reference &middot; Sanity project <code>hx1r1wkd</code> &middot; production dataset</p>
 </header>
 
@@ -498,7 +394,7 @@
     <div class="calendar-grid" id="calendarGrid"></div>
     <div class="calendar-legend">
       <span><span class="legend-dot" style="background:var(--green)"></span> Has prayers</span>
-      <span>✦ Saint of the day</span>
+      <span><span class="legend-dot" style="background:var(--gold)"></span> Has image</span>
     </div>
     <div class="stats-bar" id="statsBar"></div>
   </div>
@@ -512,12 +408,12 @@
   <div class="prayer-detail-box">
     <button class="close-btn" id="closePrayer">&times;</button>
     <h3 id="prayerDetailTitle"></h3>
-    <div class="prayer-text" id="prayerDetailText"></div>
+    <div id="prayerDetailContent"></div>
   </div>
 </div>
 
 <script>
-// ---------- Config ----------
+// ========== Config ==========
 const SANITY_PROJECT = 'hx1r1wkd';
 const SANITY_DATASET = 'production';
 const API_VERSION = '2024-01-01';
@@ -525,7 +421,7 @@ const TOKEN = 'sklJzgvKijYnT3hGAJIMwjb4tGwcJE0MGYqIYE0z6L56kNe1dxkiZyXixkhz88PGU
 
 function sanityUrl(query, params = {}) {
   const encoded = encodeURIComponent(query);
-  let url = `https://${SANITY_PROJECT}.api.sanity.io/v${API_VERSION}/data/query/${SANITY_DATASET}?query=${encoded}`;
+  let url = `https://${SANITY_PROJECT}.apicdn.sanity.io/v${API_VERSION}/data/query/${SANITY_DATASET}?query=${encoded}`;
   for (const [k, v] of Object.entries(params)) {
     url += `&$${k}="${encodeURIComponent(v)}"`;
   }
@@ -533,266 +429,56 @@ function sanityUrl(query, params = {}) {
 }
 
 async function sanityFetch(query, params = {}) {
-  const resp = await fetch(sanityUrl(query, params), {
-    headers: { 'Authorization': `Bearer ${TOKEN}` }
-  });
-  const data = await resp.json();
-  return data.result;
+  try {
+    const resp = await fetch(sanityUrl(query, params), {
+      headers: { 'Authorization': `Bearer ${TOKEN}` }
+    });
+    if (!resp.ok) {
+      console.error('Sanity API error:', resp.status, resp.statusText);
+      return null;
+    }
+    const data = await resp.json();
+    return data.result;
+  } catch (err) {
+    console.error('Sanity fetch failed:', err);
+    return null;
+  }
 }
 
-// ---------- State ----------
+// ========== State ==========
 let currentYear = 2026;
 let currentMonth = 2; // 0-indexed: March = 2
 let selectedDate = null;
 let monthCache = {};
+let detailCache = {};
 
-// ---------- Calendar ----------
+// ========== Constants ==========
 const MONTHS = ['January','February','March','April','May','June',
   'July','August','September','October','November','December'];
 
+const HOUR_LABELS = {
+  'aboutToday': 'About Today',
+  'officeOfReadings': 'Office of Readings',
+  'morningPrayer': 'Morning Prayer',
+  'lauds': 'Lauds',
+  'middayPrayer': 'Midday Prayer',
+  'terce': 'Terce',
+  'sext': 'Sext',
+  'none': 'None',
+  'eveningPrayer': 'Evening Prayer',
+  'vespers': 'Vespers',
+  'nightPrayer': 'Night Prayer',
+  'compline': 'Compline',
+  'invitatory': 'Invitatory',
+};
+
+function formatHour(hour) { return HOUR_LABELS[hour] || hour || ''; }
 function todayStr() {
   const d = new Date();
   return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
 }
 
-async function loadMonth(year, month) {
-  const key = `${year}-${month}`;
-  if (monthCache[key]) return monthCache[key];
-
-  const mm = String(month + 1).padStart(2, '0');
-  const start = `${year}-${mm}-01`;
-  const end = `${year}-${mm}-31`;
-
-  const docs = await sanityFetch(
-    `*[_type == "dailyOffice" && date >= $start && date <= $end]{
-      _id, date, dayOfWeek, description, color, prayerCount,
-      "hasSaint": defined(saintRef),
-      "artCount": count(artImages)
-    } | order(date asc)`,
-    { start, end }
-  );
-
-  const byDate = {};
-  for (const d of docs) { byDate[d.date] = d; }
-  monthCache[key] = byDate;
-  return byDate;
-}
-
-async function renderCalendar() {
-  const grid = document.getElementById('calendarGrid');
-  const label = document.getElementById('monthLabel');
-  label.textContent = `${MONTHS[currentMonth]} ${currentYear}`;
-
-  grid.innerHTML = '<div class="loading"><span class="spinner"></span></div>';
-
-  const monthData = await loadMonth(currentYear, currentMonth);
-  const today = todayStr();
-
-  const firstDay = new Date(currentYear, currentMonth, 1).getDay();
-  const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
-
-  let html = '';
-
-  // Empty cells before first day
-  for (let i = 0; i < firstDay; i++) {
-    html += '<div class="day-cell empty"></div>';
-  }
-
-  for (let d = 1; d <= daysInMonth; d++) {
-    const dateStr = `${currentYear}-${String(currentMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-    const info = monthData[dateStr];
-    const classes = ['day-cell'];
-
-    if (dateStr === today) classes.push('today');
-    if (dateStr === selectedDate) classes.push('selected');
-    if (info && info.prayerCount > 0) classes.push('has-data');
-    if (info && info.hasSaint) classes.push('has-saint');
-
-    html += `<div class="${classes.join(' ')}" data-date="${dateStr}">${d}</div>`;
-  }
-
-  grid.innerHTML = html;
-
-  // Stats
-  const dates = Object.values(monthData);
-  const statsBar = document.getElementById('statsBar');
-  const withPrayers = dates.filter(d => d.prayerCount > 0).length;
-  const withSaints = dates.filter(d => d.hasSaint).length;
-  const withArt = dates.filter(d => d.artCount > 0).length;
-
-  statsBar.innerHTML = `
-    <div>Days: <span class="stat-val">${dates.length}</span></div>
-    <div>With prayers: <span class="stat-val">${withPrayers}</span></div>
-    <div>With saints: <span class="stat-val">${withSaints}</span></div>
-    <div>With art: <span class="stat-val">${withArt}</span></div>
-  `;
-
-  // Click handlers
-  grid.querySelectorAll('.day-cell:not(.empty)').forEach(cell => {
-    cell.addEventListener('click', () => {
-      selectedDate = cell.dataset.date;
-      grid.querySelectorAll('.day-cell').forEach(c => c.classList.remove('selected'));
-      cell.classList.add('selected');
-      loadDay(selectedDate);
-    });
-  });
-}
-
-// ---------- Day Detail ----------
-async function loadDay(dateStr) {
-  const panel = document.getElementById('detailPanel');
-  panel.className = 'detail-panel';
-  panel.innerHTML = '<div class="loading"><span class="spinner"></span> Loading&hellip;</div>';
-
-  const doc = await sanityFetch(
-    `*[_type == "dailyOffice" && date == $date][0]{
-      _id, date, dayOfWeek, description, color, prayerCount, image,
-      prayers,
-      artImages,
-      "saint": saintRef->{
-        _id, name, shortBio, rank, liturgicalColor,
-        feastDay, slug
-      }
-    }`,
-    { date: dateStr }
-  );
-
-  if (!doc) {
-    panel.innerHTML = `<div class="loading">No data for ${dateStr}</div>`;
-    return;
-  }
-
-  let html = '';
-
-  // Date header
-  const displayDate = new Date(dateStr + 'T12:00:00').toLocaleDateString('en-US', {
-    weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
-  });
-
-  const colorClass = doc.color ? `color-${doc.color.replace('#','').toLowerCase()}` : '';
-
-  html += `<div class="date-header">
-    <div class="day-of-week">${doc.dayOfWeek || ''}</div>
-    <h2>${displayDate}</h2>
-    <div class="description">${doc.description || ''}</div>
-  </div>`;
-
-  // Saint section
-  if (doc.saint) {
-    const s = doc.saint;
-    const saintName = typeof s.name === 'string' ? s.name : (s.name?.en || s.name?.current || JSON.stringify(s.name));
-    const colorBadge = s.liturgicalColor
-      ? `<span class="liturgical-color-badge color-${s.liturgicalColor.toLowerCase()}">${s.liturgicalColor}</span>`
-      : '';
-
-    html += `<div class="saint-section">
-      <h3>${saintName}</h3>
-      <div class="saint-meta">
-        <span>${s.rank || ''}</span>
-        ${s.feastDay ? `<span>Feast: ${MONTHS[(s.feastDay.month || 1) - 1]} ${s.feastDay.day}</span>` : ''}
-        ${colorBadge}
-      </div>
-      ${s.shortBio ? `<div class="saint-bio">${truncate(s.shortBio, 600)}</div>` : ''}
-    </div>`;
-  }
-
-  // Art images
-  if (doc.artImages && doc.artImages.length > 0) {
-    html += `<div class="art-section"><h3>Liturgical Art (${doc.artImages.length} images)</h3><div class="art-grid">`;
-    for (const img of doc.artImages) {
-      const src = img.thumbnail || img.url || '';
-      const title = img.title || img.source || '';
-      if (src) {
-        html += `<div class="art-card">
-          <img src="${escHtml(src)}" alt="${escHtml(title)}" loading="lazy"
-               onerror="this.style.display='none'">
-          <div class="art-label" title="${escHtml(title)}">${escHtml(title)}</div>
-        </div>`;
-      }
-    }
-    html += '</div></div>';
-  }
-
-  // Prayers
-  if (doc.prayers && doc.prayers.length > 0) {
-    html += `<div class="prayers-section"><h3>Prayer Hours (${doc.prayers.length})</h3><ul class="prayer-list">`;
-    for (const p of doc.prayers) {
-      const title = p.title || '(untitled)';
-      const ref = p.templateRef || '';
-      html += `<li class="prayer-item" data-ref="${escHtml(ref)}">
-        <span class="prayer-hour-badge">${formatHour(title)}</span>
-        <span class="prayer-title">${escHtml(title)}</span>
-      </li>`;
-    }
-    html += '</ul></div>';
-  }
-
-  // Main image from divineoffice.org
-  if (doc.image && typeof doc.image === 'object' && doc.image.url) {
-    html += `<div class="art-section" style="margin-top:1.5rem">
-      <h3>Daily Image (divineoffice.org)</h3>
-      <div class="art-grid">
-        <div class="art-card">
-          <img src="${escHtml(doc.image.url)}" alt="Daily image" loading="lazy"
-               onerror="this.style.display='none'">
-          <div class="art-label">${escHtml(doc.image.description || 'divineoffice.org')}</div>
-        </div>
-      </div>
-    </div>`;
-  }
-
-  // Raw JSON toggle
-  html += `<details class="json-toggle">
-    <summary>View raw JSON</summary>
-    <pre>${escHtml(JSON.stringify(doc, null, 2))}</pre>
-  </details>`;
-
-  panel.innerHTML = html;
-
-  // Prayer click handlers
-  panel.querySelectorAll('.prayer-item[data-ref]').forEach(item => {
-    item.addEventListener('click', () => {
-      const ref = item.dataset.ref;
-      if (ref) loadPrayer(ref);
-    });
-  });
-}
-
-// ---------- Prayer Detail ----------
-async function loadPrayer(templateId) {
-  const overlay = document.getElementById('prayerOverlay');
-  const titleEl = document.getElementById('prayerDetailTitle');
-  const textEl = document.getElementById('prayerDetailText');
-
-  overlay.classList.add('visible');
-  titleEl.textContent = 'Loading…';
-  textEl.innerHTML = '<div class="loading"><span class="spinner"></span></div>';
-
-  const doc = await sanityFetch(
-    `*[_type == "divineOfficeHourModern" && _id == $id][0]{
-      hour, dayType, season, fullTextHtml, fullTextPlain, language
-    }`,
-    { id: templateId }
-  );
-
-  if (!doc) {
-    titleEl.textContent = 'Prayer not found';
-    textEl.innerHTML = `<p>Template ID: ${templateId}</p>`;
-    return;
-  }
-
-  titleEl.textContent = `${formatHour(doc.hour || '')} — ${doc.season || ''} / ${doc.dayType || ''}`;
-
-  if (doc.fullTextHtml) {
-    textEl.innerHTML = doc.fullTextHtml;
-  } else if (doc.fullTextPlain) {
-    textEl.innerHTML = `<pre style="white-space:pre-wrap;font-family:Georgia,serif">${escHtml(doc.fullTextPlain)}</pre>`;
-  } else {
-    textEl.innerHTML = '<p>No prayer text available.</p>';
-  }
-}
-
-// ---------- Helpers ----------
+// ========== Helpers ==========
 function escHtml(str) {
   const div = document.createElement('div');
   div.textContent = str || '';
@@ -801,61 +487,618 @@ function escHtml(str) {
 
 function truncate(str, max) {
   if (!str || str.length <= max) return str || '';
-  return str.substring(0, max) + '…';
+  return str.substring(0, max) + '\u2026';
 }
 
-function formatHour(hour) {
+function formatBytes(bytes) {
+  if (!bytes) return '';
+  const k = 1024;
+  const sizes = ['B', 'KB', 'MB'];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+  return Math.round((bytes / Math.pow(k, i)) * 10) / 10 + ' ' + sizes[i];
+}
+
+function formatDisplayDate(dateStr) {
+  return new Date(dateStr + 'T12:00:00').toLocaleDateString('en-US', {
+    weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+  });
+}
+
+function liturgicalColorBadge(color) {
+  if (!color) return '';
+  const name = color.replace('#','').toLowerCase();
   const map = {
-    'aboutToday': 'About Today',
-    'officeOfReadings': 'Office of Readings',
-    'morningPrayer': 'Morning Prayer',
-    'middayPrayer': 'Midday Prayer',
-    'eveningPrayer': 'Evening Prayer',
-    'nightPrayer': 'Night Prayer',
-    'compline': 'Compline',
+    '008000': 'green', '800080': 'purple', 'ff0000': 'red',
+    'ffffff': 'white', 'ff69b4': 'rose', '00ff00': 'green',
   };
-  return map[hour] || hour || '';
+  const cls = map[name] || 'white';
+  const label = { green:'Green', purple:'Purple', red:'Red', white:'White', rose:'Rose' }[cls] || name;
+  return `<span class="liturgical-color-badge color-${cls}">${label}</span>`;
 }
 
-// ---------- Event Listeners ----------
-document.getElementById('prevMonth').addEventListener('click', () => {
-  currentMonth--;
-  if (currentMonth < 0) { currentMonth = 11; currentYear--; }
-  renderCalendar();
-});
-
-document.getElementById('nextMonth').addEventListener('click', () => {
-  currentMonth++;
-  if (currentMonth > 11) { currentMonth = 0; currentYear++; }
-  renderCalendar();
-});
-
-document.getElementById('closePrayer').addEventListener('click', () => {
-  document.getElementById('prayerOverlay').classList.remove('visible');
-});
-
-document.getElementById('prayerOverlay').addEventListener('click', (e) => {
-  if (e.target === e.currentTarget) {
-    e.currentTarget.classList.remove('visible');
+function audioPlayerHtml(muxPlaybackId, mp3Url, duration, sizeBytes) {
+  let sources = '';
+  if (muxPlaybackId) {
+    sources += `<source src="https://stream.mux.com/${escHtml(muxPlaybackId)}.m3u8" type="application/x-mpegURL">`;
   }
-});
+  if (mp3Url) {
+    sources += `<source src="${escHtml(mp3Url)}" type="audio/mpeg">`;
+  }
+  const meta = [duration, formatBytes(sizeBytes)].filter(Boolean).join(' \u00b7 ');
+  const download = mp3Url ? `<a href="${escHtml(mp3Url)}" class="audio-download" download>\u2b07 MP3</a>` : '';
+  return `<div>
+    <audio controls class="inline-audio">${sources}</audio>
+    <div style="display:flex;gap:0.75rem;align-items:center;margin-top:0.2rem">
+      <span class="audio-info"><span class="audio-meta">${meta}</span></span>
+      ${download}
+    </div>
+  </div>`;
+}
 
-// ---------- Init ----------
-renderCalendar();
+// ========== GROQ Queries ==========
+const Q_MONTH = `*[_type == "dailyOffice" && date >= $start && date <= $end]{
+  _id, date, dayOfWeek, description, color, prayerCount,
+  "hasImage": defined(image.url),
+  "muxAudioCount": coalesce(muxAudioCount, 0)
+} | order(date asc)`;
 
-// Auto-select today if data exists
-(async () => {
+const Q_OFFICE = `*[_type == "dailyOffice" && date == $date][0]{
+  _id, date, dayOfWeek, description, color, prayerCount,
+  image{url, caption},
+  prayers[]{templateRef, title, sourceId, audioRefs[]},
+  muxAudioCount, muxAudioRefs[]{prayerTitle, hourSlug, muxAssetRef, muxPlaybackId, mp3Url, duration, sizeBytes}
+}`;
+
+const Q_MEDITATION = `*[_type == "dailyMeditation" && date == $date && language == "en"][0]{
+  _id, title, meditationTitle, displayTitle, author, scriptureReference,
+  sourceUrl, fullTextHtml, fullTextPlain, description,
+  mp3Url, audioDuration, muxPlaybackId, featuredImageUrl, categories[]
+}`;
+
+const Q_READING = `*[_type == "dailyReading" && date == $date && language == "en"][0]{
+  _id, liturgicalDay, dayOfWeek, lectionaryNumber,
+  reading1{reference, url, text},
+  responsorialPsalm{reference, url, refrain, text},
+  verseBeforeGospel{reference, url, text},
+  reading2{reference, url, text},
+  gospel{reference, url, text},
+  audioMp3Url, audioDuration, copyrightNotice,
+  optionalMemorials[]{name, url}
+}`;
+
+const Q_PRAYER_DETAIL = `*[_type == "divineOfficeHourModern" && _id == $id][0]{
+  hour, dayType, season,
+  openingVersicle{versicle, response},
+  hymn{title, text},
+  psalmody[]{psalmNumber, title, antiphon, text, gloryBe},
+  reading{reference, text},
+  responsory{text},
+  canticle{name, antiphon, text},
+  intercessions{introduction, petitions[]},
+  collect{text},
+  fullTextHtml, fullTextPlain
+}`;
+
+async function querySaintByDate(dateStr) {
+  const [y, m, d] = dateStr.split('-').map(Number);
+  return sanityFetch(
+    `*[_type == "saint" && feastDay.day == $day && feastDay.month == $month]
+    | order(rank asc)[0]{
+      _id, name, shortBio, feastDay, rank, liturgicalColor, slug
+    }`,
+    { day: String(d), month: String(m) }
+  );
+}
+
+// ========== Calendar ==========
+async function loadMonth(year, month) {
+  const key = `${year}-${month}`;
+  if (monthCache[key]) return monthCache[key];
+
+  const mm = String(month + 1).padStart(2, '0');
+  const start = `${year}-${mm}-01`;
+  const end = `${year}-${mm}-31`;
+
+  const docs = await sanityFetch(Q_MONTH, { start, end });
+  const byDate = {};
+  if (docs && Array.isArray(docs)) {
+    for (const d of docs) { byDate[d.date] = d; }
+  }
+  monthCache[key] = byDate;
+  return byDate;
+}
+
+async function renderCalendar() {
+  const grid = document.getElementById('calendarGrid');
+  const label = document.getElementById('monthLabel');
+  label.textContent = `${MONTHS[currentMonth]} ${currentYear}`;
+  grid.innerHTML = '<div class="loading"><span class="spinner"></span></div>';
+
+  let monthData;
+  try { monthData = await loadMonth(currentYear, currentMonth); }
+  catch (err) { console.error('Failed to load month:', err); monthData = {}; }
+
   const today = todayStr();
-  const parts = today.split('-');
-  const y = parseInt(parts[0]);
-  const m = parseInt(parts[1]) - 1;
-  if (y === currentYear && m === currentMonth) {
-    selectedDate = today;
-    await renderCalendar();
-    loadDay(today);
-  }
-})();
-</script>
+  const firstDay = new Date(currentYear, currentMonth, 1).getDay();
+  const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
 
+  let html = '';
+  for (let i = 0; i < firstDay; i++) html += '<div class="day-cell empty"></div>';
+
+  for (let d = 1; d <= daysInMonth; d++) {
+    const dateStr = `${currentYear}-${String(currentMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const info = monthData[dateStr];
+    const cls = ['day-cell'];
+    if (dateStr === today) cls.push('today');
+    if (dateStr === selectedDate) cls.push('selected');
+    if (info && info.prayerCount > 0) cls.push('has-data');
+    if (info && info.hasImage) cls.push('has-saint');
+    html += `<div class="${cls.join(' ')}" data-date="${dateStr}">${d}</div>`;
+  }
+  grid.innerHTML = html;
+
+  // Stats
+  const dates = Object.values(monthData);
+  document.getElementById('statsBar').innerHTML = `
+    <div>Days: <span class="stat-val">${dates.length}</span></div>
+    <div>With prayers: <span class="stat-val">${dates.filter(d => d.prayerCount > 0).length}</span></div>
+    <div>With images: <span class="stat-val">${dates.filter(d => d.hasImage).length}</span></div>
+    <div>With audio: <span class="stat-val">${dates.filter(d => d.muxAudioCount > 0).length}</span></div>
+  `;
+
+  // Click handlers
+  grid.querySelectorAll('.day-cell:not(.empty)').forEach(cell => {
+    cell.addEventListener('click', () => {
+      selectedDate = cell.dataset.date;
+      grid.querySelectorAll('.day-cell').forEach(c => c.classList.remove('selected'));
+      cell.classList.add('selected');
+      loadDayFull(selectedDate);
+    });
+  });
+}
+
+// ========== Day Detail — Parallel Queries ==========
+async function loadDayFull(dateStr) {
+  const panel = document.getElementById('detailPanel');
+  panel.className = 'detail-panel';
+  panel.innerHTML = '<div class="loading"><span class="spinner"></span> Loading liturgical content\u2026</div>';
+
+  // Check cache
+  if (detailCache[dateStr]) {
+    renderDetailPanel(dateStr, detailCache[dateStr]);
+    return;
+  }
+
+  try {
+    const [office, meditation, reading, saint] = await Promise.all([
+      sanityFetch(Q_OFFICE, { date: dateStr }),
+      sanityFetch(Q_MEDITATION, { date: dateStr }),
+      sanityFetch(Q_READING, { date: dateStr }),
+      querySaintByDate(dateStr),
+    ]);
+
+    const data = { office, meditation, reading, saint };
+    detailCache[dateStr] = data;
+    renderDetailPanel(dateStr, data);
+
+  } catch (err) {
+    console.error('Content load failed:', err);
+    panel.innerHTML = `<div class="error-state">
+      <h3>Unable to Load Content</h3>
+      <p>Please try again or select another date.</p>
+      <details><summary>Error details</summary><pre>${escHtml(err.message)}</pre></details>
+    </div>`;
+  }
+}
+
+// ========== Render Functions ==========
+function renderDetailPanel(dateStr, data) {
+  const { office, meditation, reading, saint } = data;
+  const panel = document.getElementById('detailPanel');
+  let html = '';
+
+  // 1. Date header
+  html += renderHeader(dateStr, office);
+
+  // 2. Saint of the Day
+  if (saint) html += renderSaintSection(saint);
+
+  // 3. Daily Image
+  if (office && office.image && office.image.url) html += renderImageSection(office.image);
+
+  // 4. Divine Office Audio
+  if (office && office.muxAudioRefs && office.muxAudioRefs.length > 0) {
+    html += renderAudioSection(office.muxAudioRefs, office.muxAudioCount);
+  }
+
+  // 5. Prayer Hours
+  if (office && office.prayers && office.prayers.length > 0) {
+    html += renderPrayersSection(office.prayers);
+  }
+
+  // 6. Meditation
+  if (meditation) html += renderMeditationSection(meditation);
+
+  // 7. Mass Readings
+  if (reading) html += renderReadingSection(reading);
+
+  // 8. No content at all
+  if (!office && !meditation && !reading && !saint) {
+    html += '<div class="loading">No liturgical content available for this date.</div>';
+  }
+
+  // 9. Debug JSON
+  html += `<details class="json-toggle">
+    <summary>View raw JSON</summary>
+    <pre>${escHtml(JSON.stringify(data, null, 2))}</pre>
+  </details>`;
+
+  panel.innerHTML = html;
+
+  // Attach prayer click handlers
+  panel.querySelectorAll('.prayer-item[data-ref]').forEach(item => {
+    item.addEventListener('click', () => {
+      if (item.dataset.ref) loadPrayerDetail(item.dataset.ref);
+    });
+  });
+}
+
+function renderHeader(dateStr, office) {
+  const display = formatDisplayDate(dateStr);
+  const dow = office ? office.dayOfWeek || '' : '';
+  const desc = office ? office.description || '' : '';
+  const colorBadge = office ? liturgicalColorBadge(office.color) : '';
+
+  return `<div class="date-header">
+    <div class="day-of-week">${escHtml(dow)}</div>
+    <h2>${display}</h2>
+    ${desc ? `<div class="description">${escHtml(desc)}</div>` : ''}
+    ${colorBadge}
+  </div>`;
+}
+
+function renderSaintSection(saint) {
+  const name = typeof saint.name === 'string' ? saint.name : (saint.name?.en || JSON.stringify(saint.name));
+  const colorBadge = saint.liturgicalColor
+    ? `<span class="liturgical-color-badge color-${saint.liturgicalColor.toLowerCase()}">${saint.liturgicalColor}</span>`
+    : '';
+
+  return `<div class="content-section">
+    <div class="section-heading"><span class="section-icon">\u2726</span> Saint of the Day</div>
+    <div class="saint-card">
+      <h3>${escHtml(name)}</h3>
+      <div class="saint-meta">
+        ${saint.rank ? `<span>${escHtml(saint.rank)}</span>` : ''}
+        ${saint.feastDay ? `<span>Feast: ${MONTHS[(saint.feastDay.month || 1) - 1]} ${saint.feastDay.day}</span>` : ''}
+        ${colorBadge}
+      </div>
+      ${saint.shortBio ? `<div class="saint-bio">${escHtml(truncate(saint.shortBio, 800))}</div>` : ''}
+    </div>
+  </div>`;
+}
+
+function renderImageSection(image) {
+  return `<div class="content-section">
+    <div class="section-heading"><span class="section-icon">\ud83d\uddbc</span> Daily Image</div>
+    <div class="art-grid">
+      <div class="art-card">
+        <img src="${escHtml(image.url)}" alt="${escHtml(image.caption || 'Daily image')}" loading="lazy"
+             onerror="this.parentElement.style.display='none'">
+        <div class="art-label">${escHtml(image.caption || 'divineoffice.org')}</div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function renderAudioSection(muxRefs, count) {
+  let html = `<div class="content-section">
+    <div class="section-heading"><span class="section-icon">\ud83c\udfa7</span> Divine Office Audio (${count || muxRefs.length} hours)</div>`;
+
+  for (const ref of muxRefs) {
+    html += `<div class="audio-player-row">
+      <div style="flex:1">
+        <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.3rem">
+          <span class="audio-badge">${formatHour(ref.hourSlug || '')}</span>
+          <span class="audio-title" style="font-size:0.88rem">${escHtml(ref.prayerTitle || ref.hourSlug || '')}</span>
+        </div>
+        ${audioPlayerHtml(ref.muxPlaybackId, ref.mp3Url, ref.duration, ref.sizeBytes)}
+      </div>
+    </div>`;
+  }
+  html += '</div>';
+  return html;
+}
+
+function renderPrayersSection(prayers) {
+  let html = `<div class="content-section">
+    <div class="section-heading"><span class="section-icon">\ud83d\udcd6</span> Prayer Hours (${prayers.length})</div>
+    <ul class="prayer-list">`;
+
+  for (const p of prayers) {
+    const title = p.title || '(untitled)';
+    const ref = p.templateRef || '';
+    html += `<li class="prayer-item" data-ref="${escHtml(ref)}">
+      <span class="prayer-hour-badge">${formatHour(title)}</span>
+      <span class="prayer-title">${escHtml(title)}</span>
+    </li>`;
+  }
+  html += '</ul></div>';
+  return html;
+}
+
+function renderMeditationSection(med) {
+  let html = `<div class="content-section">
+    <div class="section-heading"><span class="section-icon">\u2720</span> Daily Meditation &mdash; Regnum Christi</div>
+    <div class="meditation-card">`;
+
+  if (med.featuredImageUrl) {
+    html += `<img src="${escHtml(med.featuredImageUrl)}" alt="" class="featured-img" loading="lazy"
+                  onerror="this.style.display='none'">`;
+  }
+
+  if (med.scriptureReference) {
+    html += `<div class="scripture-ref">${escHtml(med.scriptureReference)}</div>`;
+  }
+  html += `<h3>${escHtml(med.meditationTitle || med.title || '')}</h3>`;
+  if (med.author) {
+    html += `<div class="author-line">by ${escHtml(med.author)}</div>`;
+  }
+
+  // Audio
+  if (med.muxPlaybackId || med.mp3Url) {
+    html += audioPlayerHtml(med.muxPlaybackId, med.mp3Url, med.audioDuration, null);
+  }
+
+  // Content
+  if (med.fullTextHtml) {
+    html += `<div class="meditation-text">${med.fullTextHtml}</div>`;
+  } else if (med.fullTextPlain) {
+    html += `<div class="meditation-text"><pre style="white-space:pre-wrap;font-family:Georgia,serif">${escHtml(med.fullTextPlain)}</pre></div>`;
+  } else if (med.description) {
+    html += `<div class="meditation-text">${escHtml(med.description)}</div>`;
+  }
+
+  if (med.sourceUrl) {
+    html += `<div class="meditation-source"><a href="${escHtml(med.sourceUrl)}" target="_blank" rel="noopener">View on RegnumChristi.org \u2197</a></div>`;
+  }
+
+  html += '</div></div>';
+  return html;
+}
+
+function renderReadingSection(rdg) {
+  let html = `<div class="content-section">
+    <div class="section-heading"><span class="section-icon">\u2626</span> Mass Readings</div>`;
+
+  if (rdg.liturgicalDay) {
+    html += `<div style="font-size:0.9rem;margin-bottom:0.75rem;color:var(--text)">${escHtml(rdg.liturgicalDay)}`;
+    if (rdg.lectionaryNumber) html += ` <span style="color:var(--text-muted);font-size:0.8rem">(Lectionary #${rdg.lectionaryNumber})</span>`;
+    html += '</div>';
+  }
+
+  if (rdg.optionalMemorials && rdg.optionalMemorials.length > 0) {
+    html += '<div class="optional-memorials">Optional Memorials: ';
+    html += rdg.optionalMemorials.map(m =>
+      m.url ? `<a href="${escHtml(m.url)}" target="_blank" rel="noopener">${escHtml(m.name)}</a>` : escHtml(m.name)
+    ).join(', ');
+    html += '</div>';
+  }
+
+  // Reading audio
+  if (rdg.audioMp3Url) {
+    html += audioPlayerHtml(null, rdg.audioMp3Url, rdg.audioDuration, null);
+  }
+
+  // Reading 1
+  if (rdg.reading1) {
+    html += renderReadingBlock('First Reading', rdg.reading1, '');
+  }
+
+  // Responsorial Psalm
+  if (rdg.responsorialPsalm) {
+    const ps = rdg.responsorialPsalm;
+    html += `<div class="reading-block psalm">
+      <div class="reading-ref">${escHtml(ps.reference || 'Responsorial Psalm')}</div>
+      ${ps.refrain ? `<div class="psalm-refrain">R. ${escHtml(ps.refrain)}</div>` : ''}
+      ${ps.text ? `<div class="reading-text">${escHtml(ps.text)}</div>` : ''}
+      ${ps.url ? `<a href="${escHtml(ps.url)}" target="_blank" rel="noopener" class="reading-link">USCCB \u2197</a>` : ''}
+    </div>`;
+  }
+
+  // Reading 2 (optional)
+  if (rdg.reading2 && rdg.reading2.reference) {
+    html += renderReadingBlock('Second Reading', rdg.reading2, '');
+  }
+
+  // Verse Before Gospel
+  if (rdg.verseBeforeGospel && rdg.verseBeforeGospel.text) {
+    html += `<div class="reading-block" style="border-left-color:var(--gold)">
+      <div class="reading-ref" style="color:var(--gold)">${escHtml(rdg.verseBeforeGospel.reference || 'Verse Before Gospel')}</div>
+      <div class="reading-text">${escHtml(rdg.verseBeforeGospel.text)}</div>
+    </div>`;
+  }
+
+  // Gospel
+  if (rdg.gospel) {
+    html += renderReadingBlock('Gospel', rdg.gospel, 'gospel');
+  }
+
+  // Copyright
+  if (rdg.copyrightNotice) {
+    html += `<div class="copyright-notice">${escHtml(rdg.copyrightNotice)}</div>`;
+  }
+
+  html += '</div>';
+  return html;
+}
+
+function renderReadingBlock(label, rdg, extraClass) {
+  return `<div class="reading-block ${extraClass}">
+    <div class="reading-ref">${escHtml(rdg.reference || label)}</div>
+    ${rdg.text ? `<div class="reading-text">${escHtml(rdg.text)}</div>` : ''}
+    ${rdg.url ? `<a href="${escHtml(rdg.url)}" target="_blank" rel="noopener" class="reading-link">USCCB \u2197</a>` : ''}
+  </div>`;
+}
+
+// ========== Prayer Detail Modal ==========
+async function loadPrayerDetail(templateId) {
+  const overlay = document.getElementById('prayerOverlay');
+  const titleEl = document.getElementById('prayerDetailTitle');
+  const contentEl = document.getElementById('prayerDetailContent');
+
+  overlay.classList.add('visible');
+  titleEl.textContent = 'Loading\u2026';
+  contentEl.innerHTML = '<div class="loading"><span class="spinner"></span></div>';
+
+  const detail = await sanityFetch(Q_PRAYER_DETAIL, { id: templateId });
+
+  if (!detail) {
+    titleEl.textContent = 'Prayer';
+    contentEl.innerHTML = '<p>Unable to load prayer details. The template may not be available.</p>';
+    return;
+  }
+
+  titleEl.textContent = formatHour(detail.hour) || 'Prayer';
+
+  let html = '';
+
+  // Meta
+  const metaParts = [detail.season, detail.dayType].filter(Boolean);
+  if (metaParts.length) {
+    html += `<div style="font-family:system-ui,sans-serif;font-size:0.75rem;color:var(--text-muted);margin-bottom:1rem;text-transform:capitalize">${escHtml(metaParts.join(' \u00b7 '))}</div>`;
+  }
+
+  // Opening Versicle
+  if (detail.openingVersicle) {
+    html += `<div class="prayer-structured-section">
+      <div class="prayer-section-label">Opening Versicle</div>
+      <div class="versicle-response">
+        <div class="v">${escHtml(detail.openingVersicle.versicle || '')}</div>
+        <div class="r">${escHtml(detail.openingVersicle.response || '')}</div>
+      </div>
+    </div>`;
+  }
+
+  // Hymn
+  if (detail.hymn) {
+    html += `<div class="prayer-structured-section">
+      <div class="prayer-section-label">Hymn${detail.hymn.title ? ' \u2014 ' + escHtml(detail.hymn.title) : ''}</div>
+      <div class="prayer-section-text">${escHtml(detail.hymn.text || '')}</div>
+    </div>`;
+  }
+
+  // Psalmody
+  if (detail.psalmody && detail.psalmody.length > 0) {
+    html += `<div class="prayer-structured-section">
+      <div class="prayer-section-label">Psalmody</div>`;
+    for (const ps of detail.psalmody) {
+      if (ps.antiphon) html += `<div class="antiphon">Ant. ${escHtml(ps.antiphon)}</div>`;
+      if (ps.title) html += `<div class="psalm-title">${escHtml(ps.psalmNumber ? 'Psalm ' + ps.psalmNumber + ' \u2014 ' : '')}${escHtml(ps.title)}</div>`;
+      if (ps.text) html += `<div class="prayer-section-text" style="white-space:pre-wrap">${escHtml(ps.text)}</div>`;
+      if (ps.gloryBe) html += `<div class="glory-be">${escHtml(ps.gloryBe)}</div>`;
+      if (ps.antiphon) html += `<div class="antiphon" style="margin-top:0.3rem">Ant. ${escHtml(ps.antiphon)}</div>`;
+    }
+    html += '</div>';
+  }
+
+  // Reading
+  if (detail.reading) {
+    html += `<div class="prayer-structured-section">
+      <div class="prayer-section-label">Reading${detail.reading.reference ? ' \u2014 ' + escHtml(detail.reading.reference) : ''}</div>
+      <div class="prayer-section-text">${escHtml(detail.reading.text || '')}</div>
+    </div>`;
+  }
+
+  // Responsory
+  if (detail.responsory && detail.responsory.text) {
+    html += `<div class="prayer-structured-section">
+      <div class="prayer-section-label">Responsory</div>
+      <div class="prayer-section-text">${escHtml(detail.responsory.text)}</div>
+    </div>`;
+  }
+
+  // Canticle
+  if (detail.canticle) {
+    html += `<div class="prayer-structured-section">
+      <div class="prayer-section-label">${escHtml(detail.canticle.name || 'Canticle')}</div>
+      ${detail.canticle.antiphon ? `<div class="antiphon">Ant. ${escHtml(detail.canticle.antiphon)}</div>` : ''}
+      ${detail.canticle.text ? `<div class="prayer-section-text" style="white-space:pre-wrap">${escHtml(detail.canticle.text)}</div>` : ''}
+    </div>`;
+  }
+
+  // Intercessions
+  if (detail.intercessions) {
+    html += `<div class="prayer-structured-section">
+      <div class="prayer-section-label">Intercessions</div>`;
+    if (detail.intercessions.introduction) {
+      html += `<div class="prayer-section-text" style="margin-bottom:0.5rem">${escHtml(detail.intercessions.introduction)}</div>`;
+    }
+    if (detail.intercessions.petitions && detail.intercessions.petitions.length > 0) {
+      for (const p of detail.intercessions.petitions) {
+        html += `<div class="prayer-section-text" style="margin-bottom:0.4rem">${escHtml(p)}</div>`;
+      }
+    }
+    html += '</div>';
+  }
+
+  // Collect
+  if (detail.collect && detail.collect.text) {
+    html += `<div class="prayer-structured-section">
+      <div class="prayer-section-label">Collect</div>
+      <div class="prayer-section-text">${escHtml(detail.collect.text)}</div>
+    </div>`;
+  }
+
+  // Fallback to full text
+  if (!html && detail.fullTextHtml) {
+    html = `<div class="prayer-text">${detail.fullTextHtml}</div>`;
+  } else if (!html && detail.fullTextPlain) {
+    html = `<div class="prayer-text"><pre style="white-space:pre-wrap;font-family:Georgia,serif">${escHtml(detail.fullTextPlain)}</pre></div>`;
+  }
+
+  if (!html) {
+    html = '<p style="color:var(--text-muted);font-style:italic">No structured content available for this prayer hour.</p>';
+  }
+
+  contentEl.innerHTML = html;
+}
+
+// ========== Init ==========
+document.addEventListener('DOMContentLoaded', () => {
+  const today = new Date();
+  currentYear = today.getFullYear();
+  currentMonth = today.getMonth();
+
+  document.getElementById('prevMonth').addEventListener('click', () => {
+    currentMonth--;
+    if (currentMonth < 0) { currentMonth = 11; currentYear--; }
+    renderCalendar();
+  });
+
+  document.getElementById('nextMonth').addEventListener('click', () => {
+    currentMonth++;
+    if (currentMonth > 11) { currentMonth = 0; currentYear++; }
+    renderCalendar();
+  });
+
+  document.getElementById('closePrayer').addEventListener('click', () => {
+    document.getElementById('prayerOverlay').classList.remove('visible');
+  });
+
+  document.getElementById('prayerOverlay').addEventListener('click', (e) => {
+    if (e.target === e.currentTarget) {
+      e.currentTarget.classList.remove('visible');
+    }
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      document.getElementById('prayerOverlay').classList.remove('visible');
+    }
+  });
+
+  renderCalendar();
+});
+</script>
 </body>
 </html>
