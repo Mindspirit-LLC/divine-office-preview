@@ -876,9 +876,16 @@ function renderMeditationSection(med) {
     html += audioPlayerHtml(med.muxPlaybackId, med.mp3Url, med.audioDuration, null);
   }
 
-  // Content
+  // Content — clean RSS HTML of duplicate images, audio iframes, and nav links
   if (med.fullTextHtml) {
-    html += `<div class="meditation-text">${med.fullTextHtml}</div>`;
+    const cleaned = med.fullTextHtml
+      .replace(/<a[^>]*>?\s*<img[^>]*class="[^"]*webfeedsFeaturedVisual[^"]*"[^>]*>\s*<\/a>/gi, '')  // featured image
+      .replace(/<img[^>]*class="[^"]*webfeedsFeaturedVisual[^"]*"[^>]*>/gi, '')  // standalone featured img
+      .replace(/<p[^>]*>\s*<iframe[^>]*player\.rss\.com[^>]*>[\s\S]*?<\/iframe>\s*<\/p>/gi, '')  // audio iframe in <p>
+      .replace(/<iframe[^>]*player\.rss\.com[^>]*>[\s\S]*?<\/iframe>/gi, '')  // standalone audio iframe
+      .replace(/<ul[^>]*class="[^"]*elementor-icon-list[^"]*"[\s\S]*?<\/ul>/gi, '')  // USCCB/Mass nav links
+      .replace(/<div[^>]*class="[^"]*elementor-widget-icon-list[^"]*"[\s\S]*?<\/div>\s*<\/div>/gi, '');  // icon list wrapper
+    html += `<div class="meditation-text">${cleaned}</div>`;
   } else if (med.fullTextPlain) {
     html += `<div class="meditation-text"><pre style="white-space:pre-wrap;font-family:Georgia,serif">${escHtml(med.fullTextPlain)}</pre></div>`;
   } else if (med.description) {
