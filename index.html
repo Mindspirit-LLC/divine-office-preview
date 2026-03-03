@@ -794,11 +794,13 @@ function renderImageSection(image, artImages) {
     </div>`;
   }
 
-  // Gallery images from multiple sources
+  // Gallery images from multiple sources (exclude generic sdcason/liturgytools)
+  const excludedSources = new Set(['sdcason', 'liturgytools']);
   if (artImages && artImages.length > 0) {
     for (const img of artImages) {
+      if (excludedSources.has(img.source)) continue;
       const src = img.thumbnail || img.url;
-      if (!src) continue;
+      if (!src || src === 'undefined' || src.includes('facebook.com/tr')) continue;
       html += `<div class="art-card">
         <a href="${escHtml(img.pageUrl || img.url)}" target="_blank" rel="noopener">
           <img src="${escHtml(src)}" alt="${escHtml(img.title || img.source || '')}" loading="lazy"
