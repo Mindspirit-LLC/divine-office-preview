@@ -957,7 +957,8 @@ function renderReadingSection(rdg) {
   if (rdg.verseBeforeGospel && (rdg.verseBeforeGospel.reference || rdg.verseBeforeGospel.text)) {
     const hasVText = rdg.verseBeforeGospel.text && rdg.verseBeforeGospel.text.length > 20;
     html += `<div class="reading-block" style="border-left-color:var(--gold)">
-      <div class="reading-ref" style="color:var(--gold)">${escHtml(rdg.verseBeforeGospel.reference || 'Verse Before Gospel')}</div>
+      <div class="reading-label" style="color:var(--gold);font-weight:700;font-size:0.85rem;text-transform:uppercase;letter-spacing:0.03em;margin-bottom:0.15rem">Verse Before the Gospel</div>
+      ${rdg.verseBeforeGospel.reference ? `<div class="reading-ref" style="color:var(--gold)">${escHtml(rdg.verseBeforeGospel.reference)}</div>` : ''}
       ${hasVText ? `<div class="reading-text">${escHtml(rdg.verseBeforeGospel.text)}</div>` : ''}
     </div>`;
   }
@@ -979,7 +980,8 @@ function renderReadingSection(rdg) {
 function renderReadingBlock(label, rdg, extraClass) {
   const hasText = rdg.text && rdg.text.length > 50; // real text, not just a citation
   return `<div class="reading-block ${extraClass}">
-    <div class="reading-ref">${escHtml(rdg.reference || label)}</div>
+    <div class="reading-label" style="font-weight:700;font-size:0.85rem;text-transform:uppercase;letter-spacing:0.03em;margin-bottom:0.15rem">${escHtml(label)}</div>
+    ${rdg.reference ? `<div class="reading-ref">${escHtml(rdg.reference)}</div>` : ''}
     ${hasText
       ? `<div class="reading-text">${escHtml(rdg.text)}</div>`
       : `<div class="reading-text-placeholder">Full reading text coming soon.</div>`}
