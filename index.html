@@ -740,10 +740,19 @@ function renderDetailPanel(dateStr, data) {
 
   panel.innerHTML = html;
 
-  // Attach prayer click handlers
+  // Attach prayer click handlers — pass audio refs for matching
+  const audioRefs = (office && office.muxAudioRefs) || [];
   panel.querySelectorAll('.prayer-item[data-ref]').forEach(item => {
     item.addEventListener('click', () => {
-      if (item.dataset.ref) loadPrayerDetail(item.dataset.ref);
+      if (item.dataset.ref) {
+        const prayerTitle = item.dataset.title || '';
+        const matchedAudio = audioRefs.find(a =>
+          a.prayerTitle && prayerTitle &&
+          a.prayerTitle.toLowerCase().replace(/\s*(i+|[12])$/,'').trim() ===
+          prayerTitle.toLowerCase().replace(/\s*(i+|[12])$/,'').trim()
+        );
+        loadPrayerDetail(item.dataset.ref, matchedAudio || null);
+      }
     });
   });
 }
@@ -844,7 +853,7 @@ function renderPrayersSection(prayers) {
   for (const p of prayers) {
     const title = p.title || '(untitled)';
     const ref = p.templateRef || '';
-    html += `<li class="prayer-item" data-ref="${escHtml(ref)}">
+    html += `<li class="prayer-item" data-ref="${escHtml(ref)}" data-title="${escHtml(title)}">
       <span class="prayer-hour-badge">${formatHour(title)}</span>
       <span class="prayer-title">${escHtml(title)}</span>
     </li>`;
@@ -978,7 +987,7 @@ function renderReadingBlock(label, rdg, extraClass) {
 }
 
 // ========== Prayer Detail Modal ==========
-async function loadPrayerDetail(templateId) {
+async function loadPrayerDetail(templateId, audioRef) {
   const overlay = document.getElementById('prayerOverlay');
   const titleEl = document.getElementById('prayerDetailTitle');
   const contentEl = document.getElementById('prayerDetailContent');
@@ -1092,6 +1101,14 @@ async function loadPrayerDetail(templateId) {
 
   if (!html) {
     html = '<p style="color:var(--text-muted);font-style:italic">No structured content available for this prayer hour.</p>';
+  }
+
+  // Audio player at bottom of prayer detail
+  if (audioRef && (audioRef.muxPlaybackId || audioRef.mp3Url)) {
+    html += `<div class="prayer-structured-section" style="margin-top:1.5rem;padding-top:1rem;border-top:1px solid var(--border)">
+      <div class="prayer-section-label">Listen</div>
+      ${audioPlayerHtml(audioRef.muxPlaybackId, audioRef.mp3Url, audioRef.duration, audioRef.sizeBytes)}
+    </div>`;
   }
 
   contentEl.innerHTML = html;
