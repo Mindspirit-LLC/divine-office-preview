@@ -309,6 +309,8 @@
       margin-bottom: 1rem;
     }
     .optional-memorials a { color: var(--accent); text-decoration: none; }
+    .optional-memorial-details[open] summary span:first-child { transform: rotate(90deg); }
+    .optional-memorial-details summary::-webkit-details-marker { display: none; }
 
     /* --- Prayer Detail Modal --- */
     .prayer-detail-overlay {
@@ -564,7 +566,14 @@ const Q_READING = `*[_type == "dailyReading" && date == $date && language == "en
   reading2{reference, url, text},
   gospel{reference, url, text},
   copyrightNotice,
-  optionalMemorials[]{name, url}
+  optionalMemorials[]{
+    name, url, liturgicalDay, lectionaryNumber,
+    reading1{reference, url, text},
+    responsorialPsalm{reference, url, refrain, text},
+    verseBeforeGospel{reference, url, text},
+    reading2{reference, url, text},
+    gospel{reference, url, text}
+  }
 }`;
 
 const Q_PRAYER_DETAIL = `*[_id == $id][0]{
@@ -923,11 +932,46 @@ function renderReadingSection(rdg) {
   }
 
   if (rdg.optionalMemorials && rdg.optionalMemorials.length > 0) {
-    html += '<div class="optional-memorials">Optional Memorials: ';
-    html += rdg.optionalMemorials.map(m =>
-      m.url ? `<a href="${escHtml(m.url)}" target="_blank" rel="noopener">${escHtml(m.name)}</a>` : escHtml(m.name)
-    ).join(', ');
-    html += '</div>';
+    for (const mem of rdg.optionalMemorials) {
+      const hasReadings = mem.reading1 || mem.gospel || mem.responsorialPsalm;
+      if (hasReadings) {
+        // Render as expandable section with full readings
+        html += `<details class="optional-memorial-details" style="margin:0.75rem 0;border:1px solid var(--border);border-radius:8px;overflow:hidden">
+          <summary style="padding:0.6rem 0.85rem;cursor:pointer;font-weight:600;font-size:0.9rem;color:var(--accent);background:var(--card-bg);list-style:none;display:flex;align-items:center;gap:0.4rem">
+            <span style="font-size:0.75rem;transition:transform 0.2s">▶</span>
+            Readings for the ${escHtml(mem.name)}
+          </summary>
+          <div style="padding:0.5rem 0.85rem 0.85rem">`;
+        if (mem.lectionaryNumber) {
+          html += `<div style="font-size:0.8rem;color:var(--text-muted);margin-bottom:0.5rem">Lectionary #${mem.lectionaryNumber}</div>`;
+        }
+        if (mem.reading1) html += renderReadingBlock('First Reading', mem.reading1, '');
+        if (mem.responsorialPsalm) {
+          const mps = mem.responsorialPsalm;
+          const hasMpsText = mps.text && mps.text.length > 50;
+          html += `<div class="reading-block psalm">
+            <div class="reading-label" style="font-weight:700;font-size:0.85rem;text-transform:uppercase;letter-spacing:0.03em;margin-bottom:0.15rem">Responsorial Psalm</div>
+            ${mps.reference ? `<div class="reading-ref">${escHtml(mps.reference)}</div>` : ''}
+            ${mps.refrain ? `<div class="psalm-refrain">R. ${escHtml(mps.refrain)}</div>` : ''}
+            ${hasMpsText ? `<div class="reading-text">${escHtml(mps.text)}</div>` : ''}
+          </div>`;
+        }
+        if (mem.verseBeforeGospel && (mem.verseBeforeGospel.reference || mem.verseBeforeGospel.text)) {
+          html += `<div class="reading-block" style="border-left-color:var(--gold)">
+            <div class="reading-label" style="color:var(--gold);font-weight:700;font-size:0.85rem;text-transform:uppercase;letter-spacing:0.03em;margin-bottom:0.15rem">Verse Before the Gospel</div>
+            ${mem.verseBeforeGospel.reference ? `<div class="reading-ref" style="color:var(--gold)">${escHtml(mem.verseBeforeGospel.reference)}</div>` : ''}
+            ${mem.verseBeforeGospel.text ? `<div class="reading-text">${escHtml(mem.verseBeforeGospel.text)}</div>` : ''}
+          </div>`;
+        }
+        if (mem.gospel) html += renderReadingBlock('Gospel', mem.gospel, 'gospel');
+        html += '</div></details>';
+      } else {
+        // No readings data — show as a simple link
+        html += `<div class="optional-memorials" style="margin:0.5rem 0">
+          ${mem.url ? `<a href="${escHtml(mem.url)}" target="_blank" rel="noopener">${escHtml(mem.name)}</a>` : escHtml(mem.name)}
+        </div>`;
+      }
+    }
   }
 
   // Reading 1
