@@ -816,7 +816,8 @@ function renderImageSection(artImages) {
     cards += `<div class="art-card">
       <a href="${escHtml(img.pageUrl || img.url)}" target="_blank" rel="noopener">
         <img src="${escHtml(src)}" alt="${escHtml(img.title || img.source || '')}" loading="lazy"
-             onerror="this.style.display='none'">
+             referrerpolicy="no-referrer"
+             onerror="this.closest('.art-card').style.display='none'">
       </a>
       <div class="art-label">${label}</div>
     </div>`;
