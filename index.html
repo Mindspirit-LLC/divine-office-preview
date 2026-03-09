@@ -380,6 +380,19 @@
 <header>
   <h1>Divine Office &mdash; Sanity CMS Data Preview</h1>
   <p>Developer reference &middot; Sanity project <code>hx1r1wkd</code> &middot; production dataset</p>
+  <div id="langSwitcher" style="margin-top:0.5rem;">
+    <label for="langSelect" style="font-size:0.8rem;opacity:0.8;font-family:system-ui,sans-serif;">Language:</label>
+    <select id="langSelect" style="margin-left:0.3rem;padding:0.2rem 0.4rem;border-radius:4px;border:none;font-size:0.8rem;background:#fff;color:#333;">
+      <option value="en" selected>English</option>
+      <option value="es">Espa&ntilde;ol</option>
+      <option value="de">Deutsch</option>
+      <option value="fr">Fran&ccedil;ais</option>
+      <option value="it">Italiano</option>
+      <option value="la">Latina</option>
+      <option value="pl">Polski</option>
+      <option value="pt">Portugu&ecirc;s</option>
+    </select>
+  </div>
 </header>
 
 <div class="container">
@@ -453,6 +466,7 @@ let currentMonth = 2; // 0-indexed: March = 2
 let selectedDate = null;
 let monthCache = {};
 let detailCache = {};
+let currentLang = 'en'; // Active language for i18n queries
 
 // ========== Constants ==========
 const MONTHS = ['January','February','March','April','May','June',
@@ -551,13 +565,15 @@ const Q_OFFICE = `*[_type == "dailyOffice" && date == $date][0]{
   muxAudioCount, muxAudioRefs[]{prayerTitle, hourSlug, muxAssetRef, muxPlaybackId, mp3Url, duration, sizeBytes}
 }`;
 
-const Q_MEDITATION = `*[_type == "dailyMeditation" && date == $date && language == "en"][0]{
+// Note: dailyMeditation uses its own `language` field (not doc-level i18n)
+const Q_MEDITATION = `*[_type == "dailyMeditation" && date == $date && language == $lang][0]{
   _id, title, meditationTitle, displayTitle, author, scriptureReference,
   sourceUrl, fullTextHtml, fullTextPlain, description,
   mp3Url, audioDuration, muxPlaybackId, featuredImageUrl, categories[]
 }`;
 
-const Q_READING = `*[_type == "dailyReading" && date == $date && language == "en"][0]{
+// Note: dailyReading uses its own `language` field (not doc-level i18n)
+const Q_READING = `*[_type == "dailyReading" && date == $date && language == $lang][0]{
   _id, liturgicalDay, dayOfWeek, lectionaryNumber, sourceUrl,
   reading1{reference, url, text},
   responsorialPsalm{reference, url, refrain, text},
@@ -592,13 +608,33 @@ const Q_PRAYER_DETAIL = `*[_id == $id][0]{
 
 async function querySaintByDate(dateStr) {
   const [y, m, d] = dateStr.split('-').map(Number);
-  return sanityFetch(
-    `*[_type == "saint" && feastDay.day == $day && feastDay.month == $month]
+  // Always query the English base doc (it has feastDay data)
+  const baseSaint = await sanityFetch(
+    `*[_type == "saint" && !(_id match "i18n.*") && feastDay.day == $day && feastDay.month == $month]
     | order(rank asc)[0]{
       _id, name, shortBio, feastDay, rank, liturgicalColor, slug
     }`,
     { day: String(d), month: String(m) }
   );
+  if (!baseSaint || currentLang === 'en') return baseSaint;
+
+  // For non-English, look up the i18n doc
+  const i18nId = `i18n.${baseSaint._id}.${currentLang}`;
+  const i18nSaint = await sanityFetch(
+    `*[_id == $i18nId][0]{
+      _id, name, shortBio, feastDay, rank, liturgicalColor, slug
+    }`,
+    { i18nId }
+  );
+  // Merge: use i18n translated fields, fall back to base for structural fields
+  if (i18nSaint) {
+    return {
+      ...baseSaint,
+      name: i18nSaint.name || baseSaint.name,
+      shortBio: i18nSaint.shortBio || baseSaint.shortBio,
+    };
+  }
+  return baseSaint;
 }
 
 // ========== Calendar ==========
@@ -674,22 +710,24 @@ async function loadDayFull(dateStr) {
   panel.className = 'detail-panel';
   panel.innerHTML = '<div class="loading"><span class="spinner"></span> Loading liturgical content\u2026</div>';
 
-  // Check cache
-  if (detailCache[dateStr]) {
-    renderDetailPanel(dateStr, detailCache[dateStr]);
+  // Check cache (keyed by date + language)
+  const cacheKey = `${dateStr}:${currentLang}`;
+  if (detailCache[cacheKey]) {
+    renderDetailPanel(dateStr, detailCache[cacheKey]);
     return;
   }
 
   try {
+    const lang = currentLang;
     const [office, meditation, reading, saint] = await Promise.all([
       sanityFetch(Q_OFFICE, { date: dateStr }),
-      sanityFetch(Q_MEDITATION, { date: dateStr }),
-      sanityFetch(Q_READING, { date: dateStr }),
+      sanityFetch(Q_MEDITATION, { date: dateStr, lang }),
+      sanityFetch(Q_READING, { date: dateStr, lang }),
       querySaintByDate(dateStr),
     ]);
 
     const data = { office, meditation, reading, saint };
-    detailCache[dateStr] = data;
+    detailCache[cacheKey] = data;
     renderDetailPanel(dateStr, data);
 
   } catch (err) {
@@ -779,7 +817,8 @@ function renderHeader(dateStr, office) {
 }
 
 function renderSaintSection(saint) {
-  const name = typeof saint.name === 'string' ? saint.name : (saint.name?.en || JSON.stringify(saint.name));
+  // After doc-level i18n migration, name is always a flat string
+  const name = typeof saint.name === 'string' ? saint.name : (saint.name || '');
   const colorBadge = saint.liturgicalColor
     ? `<span class="liturgical-color-badge color-${saint.liturgicalColor.toLowerCase()}">${saint.liturgicalColor}</span>`
     : '';
@@ -1191,6 +1230,17 @@ document.addEventListener('DOMContentLoaded', () => {
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
       document.getElementById('prayerOverlay').classList.remove('visible');
+    }
+  });
+
+  // Language switcher — reload current day when language changes
+  document.getElementById('langSelect').addEventListener('change', (e) => {
+    currentLang = e.target.value;
+    // Clear detail cache so queries re-run with new language
+    detailCache = {};
+    // Reload currently selected date if one is active
+    if (selectedDate) {
+      loadDayFull(selectedDate);
     }
   });
 
