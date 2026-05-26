@@ -475,6 +475,7 @@ const MONTHS = ['January','February','March','April','May','June',
   'July','August','September','October','November','December'];
 
 const HOUR_LABELS = {
+  // camelCase keys (legacy)
   'aboutToday': 'About Today',
   'officeOfReadings': 'Office of Readings',
   'morningPrayer': 'Morning Prayer',
@@ -488,6 +489,16 @@ const HOUR_LABELS = {
   'nightPrayer': 'Night Prayer',
   'compline': 'Compline',
   'invitatory': 'Invitatory',
+  // PascalCase keys from divineoffice.org API label field
+  'About': 'About Today',
+  'Invitatory': 'Invitatory',
+  'OfficeOfReadings': 'Office of Readings',
+  'MorningPrayer': 'Morning Prayer',
+  'MidmorningPrayer': 'Mid-Morning Prayer',
+  'MiddayPrayer': 'Midday Prayer',
+  'MidafternoonPrayer': 'Mid-Afternoon Prayer',
+  'EveningPrayer': 'Evening Prayer',
+  'NightPrayer': 'Night Prayer',
 };
 
 function formatHour(hour) { return HOUR_LABELS[hour] || hour || ''; }
@@ -557,13 +568,15 @@ function audioPlayerHtml(muxPlaybackId, mp3Url, duration, sizeBytes) {
 const Q_MONTH = `*[_type == "dailyOffice" && date >= $start && date <= $end]{
   _id, date, dayOfWeek, description, color, prayerCount,
   "hasImage": defined(image.url),
+  "hasAudio": count(prayers[defined(mediaLink)]) > 0,
   "muxAudioCount": coalesce(muxAudioCount, 0)
 } | order(date asc)`;
 
 const Q_OFFICE = `*[_type == "dailyOffice" && date == $date][0]{
   _id, date, dayOfWeek, description, color, prayerCount,
+  image{url, caption},
   artImages[]{source, url, thumbnail, title, description, pageUrl, _key, sanityImageUrl},
-  prayers[]{templateRef, title, sourceId, audioRefs[]},
+  prayers[]{templateRef, title, sourceId, label, img, imageCaption, mediaLink, mediaDuration, mediaSize, audioRefs[]},
   muxAudioCount, muxAudioRefs[]{prayerTitle, hourSlug, muxAssetRef, muxPlaybackId, mp3Url, duration, sizeBytes}
 }`;
 
@@ -692,7 +705,7 @@ async function renderCalendar() {
     <div>Days: <span class="stat-val">${dates.length}</span></div>
     <div>With prayers: <span class="stat-val">${dates.filter(d => d.prayerCount > 0).length}</span></div>
     <div>With images: <span class="stat-val">${dates.filter(d => d.hasImage).length}</span></div>
-    <div>With audio: <span class="stat-val">${dates.filter(d => d.muxAudioCount > 0).length}</span></div>
+    <div>With audio: <span class="stat-val">${dates.filter(d => d.muxAudioCount > 0 || d.hasAudio).length}</span></div>
   `;
 
   // Click handlers
@@ -751,12 +764,24 @@ function renderDetailPanel(dateStr, data) {
   // 1. Date header
   html += renderHeader(dateStr, office);
 
-  // 2. Saint of the Day
+  // 2. Day Image (from divineoffice.org)
+  if (office && office.image && office.image.url) {
+    html += `<div class="content-section">
+      <img src="${escHtml(office.image.url)}" alt="${escHtml(office.image.caption || office.description || '')}"
+           class="featured-img" loading="lazy" style="width:100%;max-height:300px;object-fit:cover;border-radius:var(--radius)"
+           onerror="this.style.display='none'"
+           referrerpolicy="no-referrer">
+      ${office.image.caption ? `<div style="font-family:system-ui,sans-serif;font-size:0.7rem;color:var(--text-muted);margin-top:0.3rem;text-align:center">${escHtml(office.image.caption)}</div>` : ''}
+    </div>`;
+  }
+
+  // 3. Saint of the Day
   if (saint) html += renderSaintSection(saint);
 
-  // 3. Daily Image / Gallery
-  const hasArt = office && office.artImages && office.artImages.length > 0;
-  if (hasArt) html += renderImageSection(office.artImages);
+  // 3b. Saint & Liturgical Gallery (artImages from Sanity)
+  if (office && office.artImages && office.artImages.length > 0) {
+    html += renderImageSection(office.artImages);
+  }
 
   // 4. Divine Office Audio
   if (office && office.muxAudioRefs && office.muxAudioRefs.length > 0) {
@@ -840,24 +865,16 @@ function renderSaintSection(saint) {
 }
 
 function renderImageSection(artImages) {
-  // Build image cards from the consolidated artImages array.
-  // The first entry may be the former primary image (source: "divineoffice").
   let cards = '';
-
   const excludedSources = new Set(['sdcason', 'liturgytools']);
   for (const img of artImages) {
     if (excludedSources.has(img.source)) continue;
-    // Prefer Sanity-hosted image (no hotlink issues), fall back to external URL
     const src = img.sanityImageUrl || img.thumbnail || img.url;
     if (!src || src === 'undefined' || src.includes('facebook.com/tr')) continue;
-
     const label = img.source === 'divineoffice'
       ? escHtml(img.title || img.description || 'divineoffice.org')
       : `${escHtml(img.source || '')}${img.title ? ' — ' + escHtml(img.title) : ''}`;
-
-    // Sanity CDN images support transforms — append ?w=600 for gallery thumbnails
     const imgSrc = img.sanityImageUrl ? src + '?w=600&fit=max&auto=format' : src;
-
     cards += `<div class="art-card">
       <a href="${escHtml(img.pageUrl || img.url)}" target="_blank" rel="noopener">
         <img src="${escHtml(imgSrc)}" alt="${escHtml(img.title || img.source || '')}" loading="lazy"
@@ -867,11 +884,9 @@ function renderImageSection(artImages) {
       <div class="art-label">${label}</div>
     </div>`;
   }
-
   if (!cards) return '';
-
   return `<div class="content-section">
-    <div class="section-heading"><span class="section-icon">\ud83d\uddbc</span> Saint &amp; Liturgical Gallery</div>
+    <div class="section-heading"><span class="section-icon">🖼️</span> Saint &amp; Liturgical Gallery</div>
     <div class="art-grid">${cards}</div>
   </div>`;
 }
@@ -903,9 +918,25 @@ function renderPrayersSection(prayers) {
   for (const p of prayers) {
     const title = p.title || '(untitled)';
     const ref = p.templateRef || '';
-    html += `<li class="prayer-item" data-ref="${escHtml(ref)}" data-title="${escHtml(title)}">
-      <span class="prayer-hour-badge">${formatHour(title)}</span>
-      <span class="prayer-title">${escHtml(title)}</span>
+    // Use the API label field for the badge, fall back to title
+    const hourLabel = formatHour(p.label || '') || formatHour(title) || title;
+    const duration = p.mediaDuration || '';
+    const hasAudio = !!(p.mediaLink);
+    const hasImg = !!(p.img);
+
+    html += `<li class="prayer-item" data-ref="${escHtml(ref)}" data-title="${escHtml(title)}" style="flex-wrap:wrap">
+      <div style="display:flex;align-items:center;gap:0.75rem;flex:1;min-width:0">
+        ${hasImg ? `<img src="${escHtml(p.img)}" alt="" style="width:40px;height:40px;border-radius:4px;object-fit:cover;flex-shrink:0" loading="lazy" referrerpolicy="no-referrer" onerror="this.style.display='none'">` : ''}
+        <span class="prayer-hour-badge">${escHtml(hourLabel)}</span>
+        <span class="prayer-title">${escHtml(title)}</span>
+        ${duration ? `<span style="font-family:system-ui,sans-serif;font-size:0.7rem;color:var(--text-muted);margin-left:auto;white-space:nowrap">${escHtml(duration)}</span>` : ''}
+        ${hasAudio ? `<span style="font-size:0.7rem;color:var(--green)" title="Audio available">\ud83c\udfa7</span>` : ''}
+      </div>
+      ${hasAudio ? `<div style="width:100%;margin-top:0.4rem">
+        <audio controls class="inline-audio" preload="none">
+          <source src="${escHtml(p.mediaLink)}" type="audio/mpeg">
+        </audio>
+      </div>` : ''}
     </li>`;
   }
   html += '</ul></div>';
