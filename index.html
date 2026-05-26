@@ -615,7 +615,7 @@ const Q_PRAYER_DETAIL = `*[_id == $id][0]{
   reading{reference, text},
   responsory{text},
   canticle{name, antiphon, text},
-  intercessions{introduction, petitions[]},
+  intercessions{introduction, petitions[]{petition, response}},
   collect{text},
   fullTextHtml, fullTextPlain,
   contentHtml, contentText
@@ -1194,7 +1194,14 @@ async function loadPrayerDetail(templateId, audioRef) {
     }
     if (detail.intercessions.petitions && detail.intercessions.petitions.length > 0) {
       for (const p of detail.intercessions.petitions) {
-        html += `<div class="prayer-section-text" style="margin-bottom:0.4rem">${escHtml(p)}</div>`;
+        if (typeof p === 'object' && p.petition) {
+          html += `<div class="petition" style="margin-bottom:0.6rem">
+            <div style="font-style:italic">${escHtml(p.petition)}</div>
+            ${p.response ? `<div style="font-weight:600;margin-left:1rem">${escHtml(p.response)}</div>` : ''}
+          </div>`;
+        } else {
+          html += `<div class="prayer-section-text" style="margin-bottom:0.4rem">${escHtml(typeof p === 'string' ? p : JSON.stringify(p))}</div>`;
+        }
       }
     }
     html += '</div>';
@@ -1208,13 +1215,25 @@ async function loadPrayerDetail(templateId, audioRef) {
     </div>`;
   }
 
-  // If no structured sections were rendered, show full text content
+  // If no structured sections were rendered, show full text content directly
   const fullHtml = detail.fullTextHtml || detail.contentHtml || '';
   const fullPlain = detail.fullTextPlain || detail.contentText || '';
   if (!html && fullHtml) {
     html = `<div class="prayer-text">${fullHtml}</div>`;
   } else if (!html && fullPlain) {
     html = `<div class="prayer-text"><pre style="white-space:pre-wrap;font-family:Georgia,serif">${escHtml(fullPlain)}</pre></div>`;
+  } else if (html && fullHtml) {
+    // Structured sections exist but may be incomplete (e.g., missing psalmody)
+    // Offer the full text as an expandable section
+    html += `<details style="margin-top:1.5rem;border-top:1px solid var(--border);padding-top:1rem">
+      <summary style="cursor:pointer;font-family:system-ui,sans-serif;font-size:0.85rem;font-weight:600;color:var(--accent);letter-spacing:0.03em">SHOW COMPLETE PRAYER TEXT</summary>
+      <div class="prayer-text" style="margin-top:0.75rem">${fullHtml}</div>
+    </details>`;
+  } else if (html && fullPlain) {
+    html += `<details style="margin-top:1.5rem;border-top:1px solid var(--border);padding-top:1rem">
+      <summary style="cursor:pointer;font-family:system-ui,sans-serif;font-size:0.85rem;font-weight:600;color:var(--accent);letter-spacing:0.03em">SHOW COMPLETE PRAYER TEXT</summary>
+      <div class="prayer-text" style="margin-top:0.75rem"><pre style="white-space:pre-wrap;font-family:Georgia,serif">${escHtml(fullPlain)}</pre></div>
+    </details>`;
   }
 
   if (!html) {
