@@ -384,7 +384,7 @@
     <label for="langSelect" style="font-size:0.8rem;opacity:0.8;font-family:system-ui,sans-serif;">Language:</label>
     <select id="langSelect" style="margin-left:0.3rem;padding:0.2rem 0.4rem;border-radius:4px;border:none;font-size:0.8rem;background:#fff;color:#333;">
       <option value="en" selected>English</option>
-      <option value="es">Espa&ntilde;ol</option>
+      <option value="es">Español</option>
       <option value="de">Deutsch</option>
       <option value="fr">Fran&ccedil;ais</option>
       <option value="it">Italiano</option>
@@ -873,7 +873,7 @@ function renderImageSection(artImages) {
     if (!src || src === 'undefined' || src.includes('facebook.com/tr')) continue;
     const label = img.source === 'divineoffice'
       ? escHtml(img.title || img.description || 'divineoffice.org')
-      : `${escHtml(img.source || '')}${img.title ? ' — ' + escHtml(img.title) : ''}`;
+      : `${escHtml(img.source || '')}${img.title ? ' \u2014 ' + escHtml(img.title) : ''}`;
     const imgSrc = img.sanityImageUrl ? src + '?w=600&fit=max&auto=format' : src;
     cards += `<div class="art-card">
       <a href="${escHtml(img.pageUrl || img.url)}" target="_blank" rel="noopener">
@@ -886,7 +886,7 @@ function renderImageSection(artImages) {
   }
   if (!cards) return '';
   return `<div class="content-section">
-    <div class="section-heading"><span class="section-icon">🖼️</span> Saint &amp; Liturgical Gallery</div>
+    <div class="section-heading"><span class="section-icon">\ud83d\uddbc\ufe0f</span> Saint &amp; Liturgical Gallery</div>
     <div class="art-grid">${cards}</div>
   </div>`;
 }
@@ -1215,25 +1215,14 @@ async function loadPrayerDetail(templateId, audioRef) {
     </div>`;
   }
 
-  // If no structured sections were rendered, show full text content directly
+  // Show the full prayer text — this is the complete content including psalms
   const fullHtml = detail.fullTextHtml || detail.contentHtml || '';
   const fullPlain = detail.fullTextPlain || detail.contentText || '';
-  if (!html && fullHtml) {
+  if (fullHtml) {
+    // Full HTML is the authoritative content — show it directly
     html = `<div class="prayer-text">${fullHtml}</div>`;
-  } else if (!html && fullPlain) {
+  } else if (fullPlain) {
     html = `<div class="prayer-text"><pre style="white-space:pre-wrap;font-family:Georgia,serif">${escHtml(fullPlain)}</pre></div>`;
-  } else if (html && fullHtml) {
-    // Structured sections exist but may be incomplete (e.g., missing psalmody)
-    // Offer the full text as an expandable section
-    html += `<details style="margin-top:1.5rem;border-top:1px solid var(--border);padding-top:1rem">
-      <summary style="cursor:pointer;font-family:system-ui,sans-serif;font-size:0.85rem;font-weight:600;color:var(--accent);letter-spacing:0.03em">SHOW COMPLETE PRAYER TEXT</summary>
-      <div class="prayer-text" style="margin-top:0.75rem">${fullHtml}</div>
-    </details>`;
-  } else if (html && fullPlain) {
-    html += `<details style="margin-top:1.5rem;border-top:1px solid var(--border);padding-top:1rem">
-      <summary style="cursor:pointer;font-family:system-ui,sans-serif;font-size:0.85rem;font-weight:600;color:var(--accent);letter-spacing:0.03em">SHOW COMPLETE PRAYER TEXT</summary>
-      <div class="prayer-text" style="margin-top:0.75rem"><pre style="white-space:pre-wrap;font-family:Georgia,serif">${escHtml(fullPlain)}</pre></div>
-    </details>`;
   }
 
   if (!html) {
